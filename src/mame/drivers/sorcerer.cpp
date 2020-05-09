@@ -181,10 +181,10 @@ void sorcerer_state::sorcerer_mem(address_map &map)
 	map(0x0000, 0x07ff).bankrw("boot");
 	map(0x0800, 0xbfff).ram();
 	//map(0xc000, 0xdfff).rom();      // mapped by the cartslot
-	map(0xe000, 0xefff).rom();                     /* rom pac and bios */
-	map(0xf000, 0xf7ff).ram().region("maincpu", 0xf000);        /* screen ram */
-	map(0xf800, 0xfbff).rom();                     /* char rom */
-	map(0xfc00, 0xffff).ram().region("maincpu", 0xfc00);        /* programmable chars */
+	map(0xe000, 0xefff).rom().region("maincpu", 0); /* rom pac and bios */
+	map(0xf000, 0xf7ff).ram().share("vram");        /* screen ram */
+	map(0xf800, 0xfbff).rom().region("crom", 0);    /* char rom */
+	map(0xfc00, 0xffff).ram().share("cram");        /* programmable chars */
 }
 
 void sorcerer_state::sorcererb_mem(address_map &map)
@@ -198,9 +198,9 @@ void sorcerer_state::sorcererd_mem(address_map &map)
 {
 	map.unmap_value_high();
 	sorcerer_mem(map);
-	map(0xbc00, 0xbcff).rom();
+	map(0xbc00, 0xbcff).rom().region("disk", 0x000);
 	map(0xbe00, 0xbe03).rw(m_fdc, FUNC(micropolis_device::read), FUNC(micropolis_device::write));
-	map(0xbf00, 0xbfff).rom();
+	map(0xbf00, 0xbfff).rom().region("disk", 0x100);
 }
 
 void sorcerer_state::sorcerer_io(address_map &map)
@@ -379,7 +379,7 @@ INPUT_PORTS_END
 static const gfx_layout sorcerer_charlayout =
 {
 	8, 8,                   /* 8 x 8 characters */
-	256,                    /* 256 characters */
+	128,                    /* 256 characters over two banks */
 	1,                  /* 1 bits per pixel */
 	{ 0 },                  /* no bitplanes */
 	/* x offsets */
@@ -391,32 +391,31 @@ static const gfx_layout sorcerer_charlayout =
 
 /* This will show the 128 characters in the ROM + whatever happens to be in the PCG */
 static GFXDECODE_START( gfx_sorcerer )
-	GFXDECODE_ENTRY( "maincpu", 0xf800, sorcerer_charlayout, 0, 1 )
+	GFXDECODE_ENTRY( "crom", 0x000, sorcerer_charlayout, 0, 1 )
+	GFXDECODE_RAM  ( "cram", 0x000, sorcerer_charlayout, 0, 1 )
 GFXDECODE_END
 
 void sorcerer_state::video_start()
 {
-	m_p_videoram = memregion("maincpu")->base()+0xf000;
 }
 
 uint32_t sorcerer_state::screen_update(screen_device &screen, bitmap_ind16 &bitmap, const rectangle &cliprect)
 {
-	uint8_t y,ra,chr,gfx;
-	uint16_t sy=0,ma=0x80,x;
-	uint16_t *p;
+	u16 ma = 0x80;
+	u16 sy = 0;
 
-	for (y = 0; y < 30; y++)
+	for (u8 y = 0; y < 30; y++)
 	{
-		for (ra = 0; ra < 8; ra++)
+		for (u8 ra = 0; ra < 8; ra++)
 		{
-			p = &bitmap.pix16(sy++);
+			u16 *p = &bitmap.pix16(sy++);
 
-			for (x = ma; x < ma+64; x++)
+			for (u16 x = ma; x < ma + 0x40; x++)
 			{
-				chr = m_p_videoram[x];
+				u8 chr = m_vram[x];
 
 				/* get pattern of pixels for that character scanline */
-				gfx = m_p_videoram[0x800 | (chr<<3) | ra];
+				u8 gfx = (chr >= 0x80 ? (const u8 *)m_cram : (const u8 *)m_crom)[((chr & 0x7f) << 3) | ra];
 
 				/* Display a scanline of a character */
 				*p++ = BIT(gfx, 7);
@@ -429,7 +428,7 @@ uint32_t sorcerer_state::screen_update(screen_device &screen, bitmap_ind16 &bitm
 				*p++ = BIT(gfx, 0);
 			}
 		}
-		ma+=64;
+		ma += 0x40;
 	}
 	return 0;
 }
@@ -614,28 +613,34 @@ void sorcerer_state::init_sorcerer()
 
 ***************************************************************************/
 ROM_START(sorcerer)
-	ROM_REGION( 0x10000, "maincpu", ROMREGION_ERASEFF )
-	ROM_LOAD("exmo1-1.1e",   0xe000, 0x0800, CRC(ac924f67) SHA1(72fcad6dd1ed5ec0527f967604401284d0e4b6a1) ) /* monitor roms */
-	ROM_LOAD("exmo1-2.2e",   0xe800, 0x0800, CRC(ead1d0f6) SHA1(c68bed7344091bca135e427b4793cc7d49ca01be) )
-	ROM_LOAD("exchr-1.20d",  0xf800, 0x0400, CRC(4a7e1cdd) SHA1(2bf07a59c506b6e0c01ec721fb7b747b20f5dced) ) /* char rom */
+	ROM_REGION( 0x1000, "maincpu", 0 )
+	ROM_LOAD("exmo1-1.1e",   0x000, 0x800, CRC(ac924f67) SHA1(72fcad6dd1ed5ec0527f967604401284d0e4b6a1) ) /* monitor roms */
+	ROM_LOAD("exmo1-2.2e",   0x800, 0x800, CRC(ead1d0f6) SHA1(c68bed7344091bca135e427b4793cc7d49ca01be) )
+
+	ROM_REGION( 0x400, "crom", 0 )
+	ROM_LOAD("exchr-1.20d",  0x000, 0x400, CRC(4a7e1cdd) SHA1(2bf07a59c506b6e0c01ec721fb7b747b20f5dced) ) /* char rom */
 ROM_END
 
 ROM_START(sorcererd)
-	ROM_REGION( 0x10000, "maincpu", ROMREGION_ERASEFF )
-	ROM_LOAD("diskboot.dat", 0xbc00, 0x0100, CRC(d82a40d6) SHA1(cd1ef5fb0312cd1640e0853d2442d7d858bc3e3b) ) // micropolis floppy boot
-	ROM_LOAD("boot.bin",     0xbf00, 0x0100, CRC(352e36bc) SHA1(99678e3cc4f315a0cf7d52aae511e405dc314190) ) // video/disk unit floppy boot
-	ROM_LOAD("exchr-1.20d",  0xf800, 0x0400, CRC(4a7e1cdd) SHA1(2bf07a59c506b6e0c01ec721fb7b747b20f5dced) ) /* char rom */
+	ROM_REGION( 0x1000, "maincpu", ROMREGION_ERASEFF )
 	ROM_SYSTEM_BIOS(0, "standard", "Standard") // To boot floppy in flop1, GO BC00
-	ROMX_LOAD("exmo1-1.1e",  0xe000, 0x0800, CRC(ac924f67) SHA1(72fcad6dd1ed5ec0527f967604401284d0e4b6a1), ROM_BIOS(0) ) /* monitor roms */
-	ROMX_LOAD("exmo1-2.2e",  0xe800, 0x0800, CRC(ead1d0f6) SHA1(c68bed7344091bca135e427b4793cc7d49ca01be), ROM_BIOS(0) )
+	ROMX_LOAD("exmo1-1.1e",  0x000, 0x800, CRC(ac924f67) SHA1(72fcad6dd1ed5ec0527f967604401284d0e4b6a1), ROM_BIOS(0) ) /* monitor roms */
+	ROMX_LOAD("exmo1-2.2e",  0x800, 0x800, CRC(ead1d0f6) SHA1(c68bed7344091bca135e427b4793cc7d49ca01be), ROM_BIOS(0) )
 	ROM_SYSTEM_BIOS(1, "sm705", "ESAG 1.3/B") // To boot floppy in flop5, press Ctrl-X
-	ROMX_LOAD("right.1e",    0xe000, 0x0800, CRC(95586fea) SHA1(9263b0c5f059b70799e0704aa18437b04487e1b0), ROM_BIOS(1) )
+	ROMX_LOAD("right.1e",    0x000, 0x800, CRC(95586fea) SHA1(9263b0c5f059b70799e0704aa18437b04487e1b0), ROM_BIOS(1) )
 	ROM_IGNORE(0x800)
-	ROMX_LOAD("left.2e",     0xe800, 0x0800, CRC(153d1628) SHA1(e9421e8eeaa5945d0e1e5135058bfe9796db8458), ROM_BIOS(1) )
+	ROMX_LOAD("left.2e",     0x800, 0x800, CRC(153d1628) SHA1(e9421e8eeaa5945d0e1e5135058bfe9796db8458), ROM_BIOS(1) )
 	ROM_IGNORE(0x800)
 	ROM_SYSTEM_BIOS(2, "sm658", "Standard Monitor 658 ver 1.3/C") // To boot floppy in flop5, press Ctrl-X
-	ROMX_LOAD("13c.1e",      0xe000, 0x0800, CRC(c3c56505) SHA1(6b88f9911b897825b10f8184ddf27af5d8cbdc4d), ROM_BIOS(2) )
-	ROMX_LOAD("13c.2e",      0xe800, 0x0800, CRC(e1ac92a8) SHA1(302096c500cc87f0441f000a01b5ddfa3c102662), ROM_BIOS(2) )
+	ROMX_LOAD("13c.1e",      0x000, 0x800, CRC(c3c56505) SHA1(6b88f9911b897825b10f8184ddf27af5d8cbdc4d), ROM_BIOS(2) )
+	ROMX_LOAD("13c.2e",      0x800, 0x800, CRC(e1ac92a8) SHA1(302096c500cc87f0441f000a01b5ddfa3c102662), ROM_BIOS(2) )
+
+	ROM_REGION( 0x200, "disk", 0 )
+	ROM_LOAD("diskboot.dat", 0x000, 0x100, CRC(d82a40d6) SHA1(cd1ef5fb0312cd1640e0853d2442d7d858bc3e3b) ) // micropolis floppy boot
+	ROM_LOAD("boot.bin",     0x100, 0x100, CRC(352e36bc) SHA1(99678e3cc4f315a0cf7d52aae511e405dc314190) ) // video/disk unit floppy boot
+
+	ROM_REGION( 0x400, "crom", 0 )
+	ROM_LOAD("exchr-1.20d",  0x000, 0x400, CRC(4a7e1cdd) SHA1(2bf07a59c506b6e0c01ec721fb7b747b20f5dced) ) /* char rom */
 
 	ROM_REGION( 0x0400, "proms", 0 )
 	ROM_LOAD_OPTIONAL("bruce.15b",  0x0000, 0x0020, CRC(fae922cb) SHA1(470a86844cfeab0d9282242e03ff1d8a1b2238d1) ) /* video prom type 6331 */
@@ -646,53 +651,59 @@ ROM_START(sorcererd)
 ROM_END
 
 ROM_START(sorcerer2)
-	ROM_REGION( 0x10000, "maincpu", ROMREGION_ERASEFF )
-	ROM_LOAD("exchr-1.20d",  0xf800, 0x0400, CRC(4a7e1cdd) SHA1(2bf07a59c506b6e0c01ec721fb7b747b20f5dced) ) /* char rom */
+	ROM_REGION( 0x1000, "maincpu", ROMREGION_ERASEFF )
 	ROM_SYSTEM_BIOS(0, "standard", "Standard")
-	ROMX_LOAD("exm011-1.1e", 0xe000, 0x0800, CRC(af9394dc) SHA1(d7e0ada64d72d33e0790690be86a36020b41fd0d), ROM_BIOS(0) )
-	ROMX_LOAD("exm011-2.2e", 0xe800, 0x0800, CRC(49978d6c) SHA1(b94127bfe99e5dc1cf5dbbb7d1b099b0ca036cd0), ROM_BIOS(0) )
+	ROMX_LOAD("exm011-1.1e", 0x000, 0x800, CRC(af9394dc) SHA1(d7e0ada64d72d33e0790690be86a36020b41fd0d), ROM_BIOS(0) )
+	ROMX_LOAD("exm011-2.2e", 0x800, 0x800, CRC(49978d6c) SHA1(b94127bfe99e5dc1cf5dbbb7d1b099b0ca036cd0), ROM_BIOS(0) )
 	ROM_SYSTEM_BIOS(1, "dwmon22a", "DWMON 2.2A")
-	ROMX_LOAD("dwmon22a.1e", 0xe000, 0x0800, CRC(82f78769) SHA1(6b999738c160557452fc25cbbe9339cfe651768b), ROM_BIOS(1) )
-	ROMX_LOAD("dwmon22a.2e", 0xe800, 0x0800, CRC(6239871b) SHA1(e687bc9669c310a3d2debb87f79d168017f35f34), ROM_BIOS(1) )
+	ROMX_LOAD("dwmon22a.1e", 0x000, 0x800, CRC(82f78769) SHA1(6b999738c160557452fc25cbbe9339cfe651768b), ROM_BIOS(1) )
+	ROMX_LOAD("dwmon22a.2e", 0x800, 0x800, CRC(6239871b) SHA1(e687bc9669c310a3d2debb87f79d168017f35f34), ROM_BIOS(1) )
 	ROM_SYSTEM_BIOS(2, "dwmon22c", "DWMON 2.2C")
-	ROMX_LOAD("dwmon22c.1e", 0xe000, 0x0800, CRC(a22db498) SHA1(ebedbce7454007f5a02fafe449fd09169173d7b3), ROM_BIOS(2) )
-	ROMX_LOAD("dwmon22c.2e", 0xe800, 0x0800, CRC(7b22b65a) SHA1(7f23dd308f34b6d795d6df06f2387dfd17f69edd), ROM_BIOS(2) )
+	ROMX_LOAD("dwmon22c.1e", 0x000, 0x800, CRC(a22db498) SHA1(ebedbce7454007f5a02fafe449fd09169173d7b3), ROM_BIOS(2) )
+	ROMX_LOAD("dwmon22c.2e", 0x800, 0x800, CRC(7b22b65a) SHA1(7f23dd308f34b6d795d6df06f2387dfd17f69edd), ROM_BIOS(2) )
 	ROM_SYSTEM_BIOS(3, "ddmon", "DDMON 1.3")
-	ROMX_LOAD("ddmon.1e",    0xe000, 0x0800, CRC(6ce481da) SHA1(c927762b29a281b7c13d59bb17ea56494c64569b), ROM_BIOS(3) )
-	ROMX_LOAD("ddmon.2e",    0xe800, 0x0800, CRC(50069b13) SHA1(0808018830fac15cceaed8ff2b19900f77447470), ROM_BIOS(3) )
+	ROMX_LOAD("ddmon.1e",    0x000, 0x800, CRC(6ce481da) SHA1(c927762b29a281b7c13d59bb17ea56494c64569b), ROM_BIOS(3) )
+	ROMX_LOAD("ddmon.2e",    0x800, 0x800, CRC(50069b13) SHA1(0808018830fac15cceaed8ff2b19900f77447470), ROM_BIOS(3) )
 	ROM_SYSTEM_BIOS(4, "adsmon", "ADSMON") // This requires an unemulated 80-column card. You can type 64 to get 64-columns, but it's mostly off the side.
-	ROMX_LOAD("adsmon.1e",   0xe000, 0x0800, CRC(460f981a) SHA1(bdae1d87b9e8ae2cae11663acd349b9ed2387094), ROM_BIOS(4) )
-	ROMX_LOAD("adsmon.2e",   0xe800, 0x0800, CRC(cb3f1dda) SHA1(3fc14306e83d73b9b9afd9b543566e52ba3e008f), ROM_BIOS(4) )
+	ROMX_LOAD("adsmon.1e",   0x000, 0x800, CRC(460f981a) SHA1(bdae1d87b9e8ae2cae11663acd349b9ed2387094), ROM_BIOS(4) )
+	ROMX_LOAD("adsmon.2e",   0x800, 0x800, CRC(cb3f1dda) SHA1(3fc14306e83d73b9b9afd9b543566e52ba3e008f), ROM_BIOS(4) )
 	ROM_SYSTEM_BIOS(5, "tvc", "TVI-MON-C-V1.5") // unknown disk support (BO is the floppy boot command)
-	ROMX_LOAD("tvc-1.1e",    0xe000, 0x0800, CRC(efc15a18) SHA1(3dee821270a0d83453b18baed88a024dfd0d7a6c), ROM_BIOS(5) )
-	ROMX_LOAD("tvc-2.2e",    0xe800, 0x0800, CRC(bc194487) SHA1(dcfd916558e3e3be22091c5558ea633c332cf6c7), ROM_BIOS(5) )
+	ROMX_LOAD("tvc-1.1e",    0x000, 0x800, CRC(efc15a18) SHA1(3dee821270a0d83453b18baed88a024dfd0d7a6c), ROM_BIOS(5) )
+	ROMX_LOAD("tvc-2.2e",    0x800, 0x800, CRC(bc194487) SHA1(dcfd916558e3e3be22091c5558ea633c332cf6c7), ROM_BIOS(5) )
+
+	ROM_REGION( 0x400, "crom", 0 )
+	ROM_LOAD("exchr-1.20d",  0x000, 0x400, CRC(4a7e1cdd) SHA1(2bf07a59c506b6e0c01ec721fb7b747b20f5dced) ) /* char rom */
 ROM_END
 
 ROM_START(sorcerera)
-	ROM_REGION( 0x10000, "maincpu", ROMREGION_ERASEFF )
-	ROM_LOAD("exchr-1.20d",  0xf800, 0x0400, CRC(4a7e1cdd) SHA1(2bf07a59c506b6e0c01ec721fb7b747b20f5dced) ) /* char rom */
+	ROM_REGION( 0x1000, "maincpu", ROMREGION_ERASEFF )
 	ROM_SYSTEM_BIOS(0, "scuamon6434", "SCUAMON64 3.4")
-	ROMX_LOAD("scua34.1e",   0xe000, 0x1000, CRC(7ff21d97) SHA1(b936cda0f2acb655fb4c1a4e7976274558543c7e), ROM_BIOS(0) )
+	ROMX_LOAD("scua34.1e",   0x000, 0x1000, CRC(7ff21d97) SHA1(b936cda0f2acb655fb4c1a4e7976274558543c7e), ROM_BIOS(0) )
+
+	ROM_REGION( 0x400, "crom", 0 )
+	ROM_LOAD("exchr-1.20d",  0x000, 0x400, CRC(4a7e1cdd) SHA1(2bf07a59c506b6e0c01ec721fb7b747b20f5dced) ) /* char rom */
 ROM_END
 
 ROM_START(sorcererb)
-	ROM_REGION( 0x10000, "maincpu", ROMREGION_ERASEFF )
-	ROM_LOAD("exchr-1.20d",  0xf800, 0x0400, CRC(4a7e1cdd) SHA1(2bf07a59c506b6e0c01ec721fb7b747b20f5dced) ) /* char rom */
+	ROM_REGION( 0x1000, "maincpu", ROMREGION_ERASEFF )
 	ROM_SYSTEM_BIOS(0, "scuamon64", "SCUAMON64")   // DI to boot floppy
-	ROMX_LOAD("scua1.1e",    0xe000, 0x0800, CRC(0fcf1de9) SHA1(db8371eabf50a9da43ec7f717279a31754351359), ROM_BIOS(0) )
-	ROM_CONTINUE(0xe000, 0x800)
-	ROMX_LOAD("scua1.2e",    0xe800, 0x0800, CRC(aa9a6ca6) SHA1(bcaa7457a1b892ed82c1a04ee21a619faa7c1a16), ROM_BIOS(0) )
-	ROM_CONTINUE(0xe800, 0x800)
+	ROMX_LOAD("scua1.1e",    0x000, 0x800, CRC(0fcf1de9) SHA1(db8371eabf50a9da43ec7f717279a31754351359), ROM_BIOS(0) )
+	ROM_CONTINUE(0x000, 0x800)
+	ROMX_LOAD("scua1.2e",    0x800, 0x800, CRC(aa9a6ca6) SHA1(bcaa7457a1b892ed82c1a04ee21a619faa7c1a16), ROM_BIOS(0) )
+	ROM_CONTINUE(0x800, 0x800)
 	ROM_SYSTEM_BIOS(1, "scuamon80", "SCUAMON80 1.0") // This works with disks, but requires an unemulated 80-column card.
-	ROMX_LOAD("scua1.1e",    0xe000, 0x0800, CRC(0fcf1de9) SHA1(db8371eabf50a9da43ec7f717279a31754351359), ROM_BIOS(1) )
+	ROMX_LOAD("scua1.1e",    0x000, 0x800, CRC(0fcf1de9) SHA1(db8371eabf50a9da43ec7f717279a31754351359), ROM_BIOS(1) )
 	ROM_IGNORE(0x800)
-	ROMX_LOAD("scua1.2e",    0xe800, 0x0800, CRC(aa9a6ca6) SHA1(bcaa7457a1b892ed82c1a04ee21a619faa7c1a16), ROM_BIOS(1) )
+	ROMX_LOAD("scua1.2e",    0x800, 0x800, CRC(aa9a6ca6) SHA1(bcaa7457a1b892ed82c1a04ee21a619faa7c1a16), ROM_BIOS(1) )
 	ROM_IGNORE(0x800)
 	ROM_SYSTEM_BIOS(2, "scuamon64dd", "SCUAMON64DD")   // DI to boot floppy
-	ROMX_LOAD("devinb.1e",   0xe000, 0x0800, CRC(a2ea2f93) SHA1(8f9298f1641806dfba819ead318a4838385223fe), ROM_BIOS(2) )
-	ROM_CONTINUE(0xe000, 0x800)
-	ROMX_LOAD("devinb.2e",   0xe800, 0x0800, CRC(4d9ea9a5) SHA1(1a3c8cf98d4caed6044b1b01cd79dcd9c61dc1e1), ROM_BIOS(2) )
-	ROM_CONTINUE(0xe800, 0x800)
+	ROMX_LOAD("devinb.1e",   0x000, 0x800, CRC(a2ea2f93) SHA1(8f9298f1641806dfba819ead318a4838385223fe), ROM_BIOS(2) )
+	ROM_CONTINUE(0x000, 0x800)
+	ROMX_LOAD("devinb.2e",   0x800, 0x800, CRC(4d9ea9a5) SHA1(1a3c8cf98d4caed6044b1b01cd79dcd9c61dc1e1), ROM_BIOS(2) )
+	ROM_CONTINUE(0x800, 0x800)
+
+	ROM_REGION( 0x400, "crom", 0 )
+	ROM_LOAD("exchr-1.20d",  0x000, 0x400, CRC(4a7e1cdd) SHA1(2bf07a59c506b6e0c01ec721fb7b747b20f5dced) ) /* char rom */
 ROM_END
 
 /*    YEAR  NAME       PARENT    COMPAT  MACHINE    INPUT     STATE           INIT           COMPANY      FULLNAME */

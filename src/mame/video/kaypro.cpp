@@ -46,14 +46,14 @@ uint32_t kaypro_state::screen_update_kayproii(screen_device &screen, bitmap_ind1
 
 				if (ra < 8)
 				{
-					chr = m_p_videoram[x]^0x80;
+					chr = m_videoram[x]^0x80;
 
 					/* Take care of flashing characters */
 					if ((chr < 0x80) && (m_framecnt & 0x08))
 						chr |= 0x80;
 
 					/* get pattern of pixels for that character scanline */
-					gfx = m_p_chargen[(chr<<3) | ra ];
+					gfx = m_chargen[(chr<<3) | ra ];
 				}
 
 				/* Display a scanline of a character (7 pixels) */
@@ -90,14 +90,14 @@ uint32_t kaypro_state::screen_update_omni2(screen_device &screen, bitmap_ind16 &
 
 				if (ra < 8)
 				{
-					chr = m_p_videoram[x];
+					chr = m_videoram[x];
 
 					/* Take care of flashing characters */
 					if ((chr > 0x7f) && (m_framecnt & 0x08))
 						chr |= 0x80;
 
 					/* get pattern of pixels for that character scanline */
-					gfx = m_p_chargen[(chr<<3) | ra ];
+					gfx = m_chargen[(chr<<3) | ra ];
 				}
 
 				/* Display a scanline of a character (7 pixels) */
@@ -147,8 +147,8 @@ MC6845_UPDATE_ROW( kaypro_state::kaypro484_update_row )
 		uint8_t inv=0;
 		if (x == cursor_x) inv=0xff;
 		uint16_t mem = (ma + x) & 0x7ff;
-		uint8_t chr = m_p_videoram[mem];
-		uint8_t attr = m_p_videoram[mem | 0x800];
+		uint8_t chr = m_videoram[mem];
+		uint8_t attr = m_videoram[mem | 0x800];
 
 		if ((attr & 3) == 3)
 		{
@@ -181,7 +181,7 @@ MC6845_UPDATE_ROW( kaypro_state::kaypro484_update_row )
 		if ( (ra == 15) & (BIT(attr, 3)) )  /* underline */
 			gfx = 0xff;
 		else
-			gfx = m_p_chargen[(chr<<4) | ra ] ^ inv;
+			gfx = m_chargen[(chr<<4) | ra ] ^ inv;
 
 		/* Display a scanline of a character (8 pixels) */
 		*p++ = palette[BIT( gfx, 7 ) ? fg : bg];
@@ -247,25 +247,24 @@ WRITE8_MEMBER( kaypro_state::kaypro484_register_w )
 
 READ8_MEMBER( kaypro_state::kaypro_videoram_r )
 {
-	return m_p_videoram[offset];
+	return m_videoram[offset];
 }
 
 WRITE8_MEMBER( kaypro_state::kaypro_videoram_w )
 {
-	m_p_videoram[offset] = data;
+	m_videoram[offset] = data;
 }
 
 READ8_MEMBER( kaypro_state::kaypro484_videoram_r )
 {
-	return m_p_videoram[m_mc6845_video_address];
+	return m_videoram[m_mc6845_video_address];
 }
 
 WRITE8_MEMBER( kaypro_state::kaypro484_videoram_w )
 {
-	m_p_videoram[m_mc6845_video_address] = data;
+	m_videoram[m_mc6845_video_address] = data;
 }
 
 VIDEO_START_MEMBER(kaypro_state,kaypro)
 {
-	m_p_videoram = memregion("roms")->base()+0x3000;
 }

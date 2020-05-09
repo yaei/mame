@@ -73,6 +73,8 @@ public:
 		, m_fdc(*this, "fdc")
 		, m_floppy0(*this, "fdc:0")
 		, m_floppy1(*this, "fdc:1")
+		, m_rom(*this, "maincpu")
+		, m_ram(*this, "ram")
 	{ }
 
 	void mbc200(machine_config &config);
@@ -105,14 +107,15 @@ private:
 	required_device<mb8876_device> m_fdc;
 	required_device<floppy_connector> m_floppy0;
 	required_device<floppy_connector> m_floppy1;
+	required_region_ptr<u8> m_rom;
+	required_shared_ptr<u8> m_ram;
 };
 
 
 void mbc200_state::mbc200_mem(address_map &map)
 {
 	map.unmap_value_high();
-	map(0x0000, 0x0fff).ram().region("maincpu", 0);
-	map(0x1000, 0xffff).ram();
+	map(0x0000, 0xffff).ram().share("ram");
 }
 
 WRITE8_MEMBER( mbc200_state::p1_portc_w )
@@ -164,8 +167,8 @@ void mbc200_state::mbc200_io(address_map &map)
 void mbc200_state::mbc200_sub_mem(address_map &map)
 {
 	map.unmap_value_high();
-	map(0x0000, 0x2fff).rom();
-	map(0x3000, 0x7fff).ram();
+	map(0x0000, 0x1fff).rom();
+	map(0x2000, 0x7fff).ram();
 	map(0x8000, 0xffff).ram().share("vram");
 }
 
@@ -254,9 +257,8 @@ void mbc200_state::machine_start()
 
 void mbc200_state::machine_reset()
 {
-	uint8_t* roms = memregion("roms")->base();
-	uint8_t* main = memregion("maincpu")->base();
-	memcpy(main, roms, 0x1000);
+	// Need banking, not sure what triggers it.  Reading from ff00+ maybe?
+	memcpy(m_ram, m_rom, 0x800);
 }
 
 static void mbc200_floppies(device_slot_interface &device)
@@ -359,10 +361,10 @@ void mbc200_state::mbc200(machine_config &config)
 
 /* ROM definition */
 ROM_START( mbc200 )
-	ROM_REGION( 0x1000, "maincpu", ROMREGION_ERASEFF )
-	ROM_REGION( 0x1000, "roms", 0 )
+	ROM_REGION( 0x1000, "maincpu", 0 )
 	ROM_LOAD( "d2732a.bin",  0x0000, 0x1000, CRC(bf364ce8) SHA1(baa3a20a5b01745a390ef16628dc18f8d682d63b))
-	ROM_REGION( 0x3000, "subcpu", ROMREGION_ERASEFF )
+
+	ROM_REGION( 0x2000, "subcpu", ROMREGION_ERASEFF )
 	ROM_LOAD( "m5l2764.bin", 0x0000, 0x2000, CRC(377300a2) SHA1(8563172f9e7f84330378a8d179f4138be5fda099))
 ROM_END
 

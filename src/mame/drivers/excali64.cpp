@@ -61,6 +61,8 @@ public:
 		, m_palette(*this, "palette")
 		, m_maincpu(*this, "maincpu")
 		, m_p_chargen(*this, "chargen")
+		, m_p_rambank(*this, "rambank", 0xc000, ENDIANNESS_LITTLE)
+		, m_p_videoram(*this, "videoram", 0xa000, ENDIANNESS_LITTLE)
 		, m_cass(*this, "cassette")
 		, m_crtc(*this, "crtc")
 		, m_io_keyboard(*this, "KEY.%u", 0)
@@ -103,7 +105,6 @@ private:
 	void io_map(address_map &map);
 	void mem_map(address_map &map);
 
-	uint8_t *m_p_videoram;
 	uint8_t *m_p_hiresram;
 	uint8_t m_sys_status;
 	uint8_t m_kbdrow;
@@ -114,6 +115,8 @@ private:
 	required_device<palette_device> m_palette;
 	required_device<cpu_device> m_maincpu;
 	required_region_ptr<u8> m_p_chargen;
+	memory_share_creator<u8> m_p_rambank;
+	memory_share_creator<u8> m_p_videoram;
 	required_device<cassette_image_device> m_cass;
 	required_device<mc6845_device> m_crtc;
 	required_ioport_array<8> m_io_keyboard;
@@ -131,7 +134,7 @@ void excali64_state::mem_map(address_map &map)
 	map(0x2000, 0x2FFF).bankr("bankr2").bankw("bankw2");
 	map(0x3000, 0x3FFF).bankr("bankr3").bankw("bankw3");
 	map(0x4000, 0xBFFF).bankr("bankr4").bankw("bankw4");
-	map(0xC000, 0xFFFF).ram().region("rambank", 0xC000);
+	map(0xC000, 0xFFFF).ram();
 }
 
 void excali64_state::io_map(address_map &map)
@@ -462,20 +465,18 @@ GFXDECODE_END
 void excali64_state::excali64_palette(palette_device &palette)
 {
 	// do this here because driver_init hasn't run yet
-	m_p_videoram = memregion("videoram")->base();
 	m_p_hiresram = m_p_videoram + 0x2000;
 	uint8_t *main = memregion("roms")->base();
-	uint8_t *ram = memregion("rambank")->base();
 
 	// main ram (cp/m mode)
-	membank("bankr1")->configure_entry(0, &ram[0x0000]);
-	membank("bankr2")->configure_entry(0, &ram[0x2000]);
-	membank("bankr3")->configure_entry(0, &ram[0x3000]);
-	membank("bankr4")->configure_entry(0, &ram[0x4000]);//boot
-	membank("bankw1")->configure_entry(0, &ram[0x0000]);//boot
-	membank("bankw2")->configure_entry(0, &ram[0x2000]);
-	membank("bankw3")->configure_entry(0, &ram[0x3000]);
-	membank("bankw4")->configure_entry(0, &ram[0x4000]);//boot
+	membank("bankr1")->configure_entry(0, &m_p_rambank[0x0000]);
+	membank("bankr2")->configure_entry(0, &m_p_rambank[0x2000]);
+	membank("bankr3")->configure_entry(0, &m_p_rambank[0x3000]);
+	membank("bankr4")->configure_entry(0, &m_p_rambank[0x4000]);//boot
+	membank("bankw1")->configure_entry(0, &m_p_rambank[0x0000]);//boot
+	membank("bankw2")->configure_entry(0, &m_p_rambank[0x2000]);
+	membank("bankw3")->configure_entry(0, &m_p_rambank[0x3000]);
+	membank("bankw4")->configure_entry(0, &m_p_rambank[0x4000]);//boot
 	// rom_1
 	membank("bankr1")->configure_entry(1, &main[0x0000]);//boot
 	membank("bankr1")->configure_entry(2, &main[0x2000]);
@@ -644,9 +645,6 @@ ROM_START( excali64 )
 	ROM_FILL(0x4f7, 1, 8)
 	// patch out the protection
 	ROM_FILL(0x3ce7, 1, 0)
-
-	ROM_REGION(0x10000, "rambank", ROMREGION_ERASE00)
-	ROM_REGION(0xA000, "videoram", ROMREGION_ERASE00)
 
 	ROM_REGION(0x1020, "chargen", 0)
 	ROM_LOAD( "genex_3.ic43", 0x0000, 0x1000, CRC(b91619a9) SHA1(2ced636cb7b94ba9d329868d7ecf79963cefe9d9) )

@@ -432,7 +432,7 @@ void rt1715_state::rt1715w_banked_mem(address_map &map)
 {
 	// map 0
 	map(0x00000, 0x007ff).rom().region("ipl", 0);
-	map(0x02000, 0x02fff).ram().region("gfx", 0);
+	map(0x02000, 0x02fff).rom().region("gfx", 0);
 	map(0x03000, 0x03fff).ram().share("videoram");
 	map(0x04000, 0x0ffff).bankrw("bank2");
 	// maps 1-5

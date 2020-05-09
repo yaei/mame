@@ -52,6 +52,8 @@ public:
 		: driver_device(mconfig, type, tag)
 		, m_maincpu(*this, "maincpu")
 		, m_p_chargen(*this, "chargen")
+		, m_videoram(*this, "videoram")
+		, m_extraram(*this, "extraram", 0x1000, ENDIANNESS_LITTLE)
 		, m_dac(*this, "dac")
 		, m_cass(*this, "cassette")
 	{ }
@@ -93,6 +95,8 @@ private:
 	bool m_nmi;
 	required_device<cpu_device> m_maincpu;
 	required_region_ptr<u8> m_p_chargen;
+	optional_shared_ptr<u8> m_videoram;
+	memory_share_creator<u8> m_extraram; // b4 only in reality
 	required_device<dac_bit_interface> m_dac;
 	required_device<cassette_image_device> m_cass;
 };
@@ -217,11 +221,11 @@ void homelab_state::homelab2_mem(address_map &map)
 	map(0x1000, 0x17ff).rom();  // ROM 3
 	map(0x1800, 0x1fff).rom();  // ROM 4
 	map(0x2000, 0x27ff).rom();  // ROM 5
-	map(0x2800, 0x2fff).rom();  // ROM 6
-	map(0x3000, 0x37ff).rom();  // Empty
+	map(0x2800, 0x2fff).nopr(); // ROM 6
+	map(0x3000, 0x37ff).nopr(); // Empty
 	map(0x3800, 0x3fff).rw(FUNC(homelab_state::key_r), FUNC(homelab_state::cass_w));
 	map(0x4000, 0x7fff).ram();
-	map(0xc000, 0xc3ff).ram().region("maincpu", 0xc000);
+	map(0xc000, 0xc3ff).ram().share("videoram");
 	map(0xe000, 0xe0ff).r(FUNC(homelab_state::cass2_r));
 }
 
@@ -230,7 +234,7 @@ void homelab_state::homelab3_mem(address_map &map)
 	map(0x0000, 0x3fff).rom();
 	map(0x4000, 0x7fff).ram();
 	map(0xe800, 0xefff).r(FUNC(homelab_state::exxx_r));
-	map(0xf800, 0xffff).ram().region("maincpu", 0xf800);
+	map(0xf800, 0xffff).ram().share("videoram");
 }
 
 void homelab_state::homelab3_io(address_map &map)
@@ -245,7 +249,7 @@ void homelab_state::brailab4_mem(address_map &map)
 {
 	map(0x0000, 0x3fff).rom();
 	map(0x4000, 0xcfff).ram();
-	map(0xd000, 0xdfff).rom();
+	map(0xd000, 0xdfff).rom().region("maincpu", 0x4000);
 	map(0xe800, 0xefff).r(FUNC(homelab_state::exxx_r));
 	map(0xf800, 0xffff).bankrw("bank1");
 }
@@ -567,17 +571,17 @@ INPUT_PORTS_END
 
 VIDEO_START_MEMBER(homelab_state,homelab2)
 {
-	m_p_videoram = memregion("maincpu")->base()+0xc000;
+	m_p_videoram = m_videoram;
 }
 
 VIDEO_START_MEMBER(homelab_state,homelab3)
 {
-	m_p_videoram = memregion("maincpu")->base()+0xf800;
+	m_p_videoram = m_videoram;
 }
 
 VIDEO_START_MEMBER(homelab_state,brailab4)
 {
-	m_p_videoram = memregion("maincpu")->base()+0x17800;
+	m_p_videoram = m_extraram + 0x800;
 }
 
 uint32_t homelab_state::screen_update_homelab2(screen_device &screen, bitmap_ind16 &bitmap, const rectangle &cliprect)
@@ -852,14 +856,13 @@ void homelab_state::brailab4(machine_config &config)
 
 void homelab_state::init_brailab4()
 {
-	uint8_t *RAM = memregion("maincpu")->base();
-	membank("bank1")->configure_entries(0, 2, &RAM[0xf800], 0x8000);
+	membank("bank1")->configure_entries(0, 2, m_extraram, 0x800);
 }
 
 /* ROM definition */
 
 ROM_START( homelab2 )
-	ROM_REGION( 0x10000, "maincpu", ROMREGION_ERASEFF )
+	ROM_REGION( 0x2800, "maincpu", ROMREGION_ERASEFF )
 	ROM_LOAD( "hl2_1.rom", 0x0000, 0x0800, BAD_DUMP CRC(205365f7) SHA1(da93b65befd83513dc762663b234227ba804124d))
 	ROM_LOAD( "hl2_2.rom", 0x0800, 0x0800, CRC(696af3c1) SHA1(b53bc6ae2b75975618fc90e7181fa5d21409fce1))
 	ROM_LOAD( "hl2_3.rom", 0x1000, 0x0800, CRC(69e57e8c) SHA1(e98510abb715dbf513e1b29fb6b09ab54e9483b7))
@@ -875,7 +878,7 @@ ROM_START( homelab2 )
 ROM_END
 
 ROM_START( homelab3 )
-	ROM_REGION( 0x10000, "maincpu", ROMREGION_ERASEFF )
+	ROM_REGION( 0x4000, "maincpu", ROMREGION_ERASEFF )
 	ROM_LOAD( "hl3_1.rom", 0x0000, 0x1000, CRC(6b90a8ea) SHA1(8ac40ca889b8c26cdf74ca309fbafd70dcfdfbec))
 	ROM_LOAD( "hl3_2.rom", 0x1000, 0x1000, CRC(bcac3c24) SHA1(aff371d17f61cb60c464998e092f04d5d85c4d52))
 	ROM_LOAD( "hl3_3.rom", 0x2000, 0x1000, CRC(ab1b4ab0) SHA1(ad74c7793f5dc22061a88ef31d3407267ad08719))
@@ -886,7 +889,7 @@ ROM_START( homelab3 )
 ROM_END
 
 ROM_START( homelab4 )
-	ROM_REGION( 0x10000, "maincpu", ROMREGION_ERASEFF )
+	ROM_REGION( 0x4000, "maincpu", ROMREGION_ERASEFF )
 	ROM_LOAD( "hl4_1.rom", 0x0000, 0x1000, CRC(a549b2d4) SHA1(90fc5595da8431616aee56eb5143b9f04281e798))
 	ROM_LOAD( "hl4_2.rom", 0x1000, 0x1000, CRC(151d33e8) SHA1(d32004bc1553f802b9d3266709552f7d5315fe44))
 	ROM_LOAD( "hl4_3.rom", 0x2000, 0x1000, CRC(39571ab1) SHA1(8470cff2e3442101e6a0bc655358b3a6fc1ef944))
@@ -897,12 +900,12 @@ ROM_START( homelab4 )
 ROM_END
 
 ROM_START( brailab4 )
-	ROM_REGION( 0x18000, "maincpu", ROMREGION_ERASEFF )
+	ROM_REGION( 0x5000, "maincpu", ROMREGION_ERASEFF )
 	ROM_LOAD( "brl1.rom", 0x0000, 0x1000, CRC(02323403) SHA1(3a2e853e0a39e05a04a8db58e1a76de1eda579c9))
 	ROM_LOAD( "brl2.rom", 0x1000, 0x1000, CRC(36173fbc) SHA1(1c01398e16a1cbe4103e1be769347ceae873e090))
 	ROM_LOAD( "brl3.rom", 0x2000, 0x1000, CRC(d3cdd108) SHA1(1a24e6c5f9c370ff6cb25045cb9d95e664467eb5))
 	ROM_LOAD( "brl4.rom", 0x3000, 0x1000, CRC(d4047885) SHA1(00fe40c4c2c64a49bb429fb2b27cc7e0d0025a85))
-	ROM_LOAD( "brl5.rom", 0xd000, 0x1000, CRC(8a76be04) SHA1(4b683b9be23b47117901fe874072eb7aa481e4ff))
+	ROM_LOAD( "brl5.rom", 0x4000, 0x1000, CRC(8a76be04) SHA1(4b683b9be23b47117901fe874072eb7aa481e4ff))
 
 	ROM_REGION(0x0800, "chargen",0)
 	ROM_LOAD( "hl4.chr", 0x0000, 0x0800, CRC(f58ee39b) SHA1(49399c42d60a11b218a225856da86a9f3975a78a))
@@ -918,7 +921,7 @@ ROM_START( brailab4 )
 ROM_END
 
 ROM_START( braiplus )
-	ROM_REGION( 0x18000, "maincpu", ROMREGION_ERASEFF )
+	ROM_REGION( 0x5000, "maincpu", ROMREGION_ERASEFF )
 	ROM_LOAD( "brailabplus.bin", 0x0000, 0x4000, CRC(521d6952) SHA1(f7405520d86fc7abd2dec51d1d016658472f6fe8) )
 
 	ROM_REGION(0x0800, "chargen",0) // no idea what chargen it uses

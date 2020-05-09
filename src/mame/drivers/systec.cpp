@@ -61,7 +61,8 @@ private:
 void systec_state::systec_mem(address_map &map)
 {
 	map.unmap_value_high();
-	map(0x0000, 0xffff).ram().region("maincpu", 0);
+	map(0x0000, 0x1fff).rom().region("maincpu", 0);
+	map(0x2000, 0xffff).ram();
 }
 
 void systec_state::systec_io(address_map &map)
@@ -78,9 +79,6 @@ INPUT_PORTS_END
 
 void systec_state::machine_reset()
 {
-	uint8_t *m_p_maincpu = memregion("maincpu")->base();
-	uint8_t *m_p_roms = memregion("roms")->base();
-	memcpy(m_p_maincpu, m_p_roms, 0x2000);
 }
 
 
@@ -110,8 +108,7 @@ void systec_state::systec(machine_config &config)
 
 /* ROM definition */
 ROM_START( systec )
-	ROM_REGION( 0x10000, "maincpu", ROMREGION_ERASEFF )
-	ROM_REGION( 0x10000, "roms", 0 )
+	ROM_REGION( 0x2000, "maincpu", 0 )
 	ROM_LOAD( "systec.bin",   0x0000, 0x2000, CRC(967108ab) SHA1(a414db032ca7db0f9fdbe22aa68a099a93efb593))
 ROM_END
 

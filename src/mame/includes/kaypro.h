@@ -30,7 +30,9 @@ public:
 		, m_palette(*this, "palette")
 		, m_screen(*this, "screen")
 		, m_maincpu(*this, "maincpu")
-		, m_p_chargen(*this, "chargen")
+		, m_chargen(*this, "chargen")
+		, m_ram(*this, "ram", 0x4000, ENDIANNESS_LITTLE)
+		, m_videoram(*this, "videoram", 0x1000, ENDIANNESS_LITTLE)
 		, m_pio_g(*this, "z80pio_g")
 		, m_pio_s(*this, "z80pio_s")
 		, m_centronics(*this, "centronics")
@@ -96,7 +98,9 @@ private:
 	required_device<palette_device> m_palette;
 	required_device<screen_device> m_screen;
 	required_device<z80_device> m_maincpu;
-	required_region_ptr<u8> m_p_chargen;
+	required_region_ptr<u8> m_chargen;
+	memory_share_creator<u8> m_ram;
+	memory_share_creator<u8> m_videoram;
 	optional_device<z80pio_device> m_pio_g;
 	optional_device<z80pio_device> m_pio_s;
 	required_device<centronics_device> m_centronics;
