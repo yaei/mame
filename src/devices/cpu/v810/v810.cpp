@@ -1255,7 +1255,7 @@ const v810_device::opcode_func v810_device::s_OpCodeTable[64] =
 
 void v810_device::device_start()
 {
-	space(AS_PROGRAM).cache(m_cache);
+	space(AS_PROGRAM).specific(m_cache);
 	space(AS_PROGRAM).specific(m_program);
 	space(has_space(AS_IO) ? AS_IO : AS_PROGRAM).specific(m_io);
 

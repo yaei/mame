@@ -26,7 +26,7 @@ protected:
 
 private:
 	required_address_space m_memory_space;
-	memory_access<24, 1, 0, ENDIANNESS_BIG>::cache m_memory;
+	memory_access<24, 1, 0, ENDIANNESS_BIG>::specific m_memory;
 
 	u16 m_control;
 	u16 m_history;

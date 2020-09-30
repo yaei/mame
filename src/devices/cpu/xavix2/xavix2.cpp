@@ -18,7 +18,7 @@ xavix2_device::xavix2_device(const machine_config &mconfig, const char *tag, dev
 
 void xavix2_device::device_start()
 {
-	space(AS_PROGRAM).cache(m_program_cache);
+	space(AS_PROGRAM).specific(m_program_cache);
 	space(AS_PROGRAM).specific(m_program);
 
 	state_add(STATE_GENPC,     "GENPC",     m_pc).callexport().noshow();

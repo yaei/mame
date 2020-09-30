@@ -122,12 +122,12 @@ device_memory_interface::space_config_vector sam6883_device::memory_space_config
 void sam6883_device::device_start()
 {
 	// get spaces
-	space(0).cache(m_ram_space);
+	space(0).specific(m_ram_space);
 	for (int i = 0; i < 3; i++)
-		space(i + 1).cache(m_rom_space[i]);
+		space(i + 1).specific(m_rom_space[i]);
 	for (int i = 0; i < 3; i++)
 		space(i + 4).specific(m_io_space[i]);
-	space(7).cache(m_boot_space);
+	space(7).specific(m_boot_space);
 
 	// save state support
 	save_item(NAME(m_sam_state));

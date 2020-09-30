@@ -1073,7 +1073,7 @@ void cop400_cpu_device::device_timer(emu_timer &timer, device_timer_id id, int p
 void cop400_cpu_device::device_start()
 {
 	/* find address spaces */
-	space(AS_PROGRAM).cache(m_program);
+	space(AS_PROGRAM).specific(m_program);
 	space(AS_DATA).specific(m_data);
 
 	/* find i/o handlers */

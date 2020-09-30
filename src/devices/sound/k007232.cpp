@@ -64,7 +64,7 @@ void k007232_device::device_start()
 			m_pcmlimit = m_rom.bytes();
 		}
 	}
-	space(0).cache(m_cache);
+	space(0).specific(m_cache);
 
 	/* Set up the chips */
 	m_port_write_handler.resolve_safe();

@@ -295,8 +295,8 @@ protected:
 	uint8_t   m_test_state;
 
 	address_space *m_program, *m_opcodes;
-	memory_access<20, 0, 0, ENDIANNESS_LITTLE>::cache m_cache8;
-	memory_access<20, 1, 0, ENDIANNESS_LITTLE>::cache m_cache16;
+	memory_access<20, 0, 0, ENDIANNESS_LITTLE>::specific m_cache8;
+	memory_access<20, 1, 0, ENDIANNESS_LITTLE>::specific m_cache16;
 
 	std::function<u8 (offs_t)> m_or8;
 	address_space *m_io;

@@ -219,7 +219,7 @@ private:
 	uint32_t m_nextpc;
 
 protected:
-	memory_access<32, 2, 0, ENDIANNESS_BIG>::cache m_pcache;
+	memory_access<32, 2, 0, ENDIANNESS_BIG>::specific m_pcache;
 	memory_access<32, 2, 0, ENDIANNESS_BIG>::specific m_program;
 
 private:

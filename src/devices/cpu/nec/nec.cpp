@@ -498,18 +498,18 @@ void nec_common_device::device_start()
 	m_program = &space(AS_PROGRAM);
 	if (m_program->data_width() == 8)
 	{
-		m_program->cache(m_cache8);
+		m_program->specific(m_cache8);
 		m_dr8 = [this](offs_t address) -> u8 { return m_cache8.read_byte(address); };
 	}
 	else if (m_chip_type == V33_TYPE)
 	{
 		save_item(NAME(m_xa));
-		m_program->cache(m_cache16);
+		m_program->specific(m_cache16);
 		m_dr8 = [this](offs_t address) -> u8 { return m_cache16.read_byte(v33_translate(address)); };
 	}
 	else
 	{
-		m_program->cache(m_cache16);
+		m_program->specific(m_cache16);
 		m_dr8 = [this](offs_t address) -> u8 { return m_cache16.read_byte(address); };
 	}
 

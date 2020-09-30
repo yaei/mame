@@ -273,7 +273,7 @@ uml::code_handle::code_handle(drcuml_state &drcuml, const char *name)
 void uml::code_handle::set_codeptr(drccodeptr code)
 {
 	assert(*m_code == nullptr);
-	assert_in_cache(m_drcuml.cache(), code);
+	assert_in_cache(m_drcuml.specific(), code);
 	*m_code = code;
 }
 

@@ -1710,7 +1710,7 @@ void se3208_device::device_reset()
 	m_SP = 0;
 	m_ER = 0;
 	m_PPC = 0;
-	space(AS_PROGRAM).cache(m_cache);
+	space(AS_PROGRAM).specific(m_cache);
 	space(AS_PROGRAM).specific(m_program);
 	m_PC=SE3208_Read32(0);
 	m_SR=0;
@@ -1780,7 +1780,7 @@ void se3208_device::device_start()
 {
 	BuildTable();
 
-	space(AS_PROGRAM).cache(m_cache);
+	space(AS_PROGRAM).specific(m_cache);
 	space(AS_PROGRAM).specific(m_program);
 
 	save_item(NAME(m_R));

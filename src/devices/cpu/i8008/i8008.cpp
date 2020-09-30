@@ -50,7 +50,7 @@ i8008_device::i8008_device(const machine_config &mconfig, const char *tag, devic
 void i8008_device::device_start()
 {
 	// find address spaces
-	space(AS_PROGRAM).cache(m_cache);
+	space(AS_PROGRAM).specific(m_cache);
 	space(AS_PROGRAM).specific(m_program);
 	space(AS_IO).specific(m_io);
 

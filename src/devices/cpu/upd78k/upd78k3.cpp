@@ -128,9 +128,9 @@ void upd78k3_device::state_add_psw()
 void upd78k3_device::device_start()
 {
 	// get address spaces and access caches
-	space(AS_PROGRAM).cache(m_program_cache);
+	space(AS_PROGRAM).specific(m_program_cache);
 	space(AS_PROGRAM).specific(m_program_space);
-	space(AS_DATA).cache(m_iram_cache);
+	space(AS_DATA).specific(m_iram_cache);
 	space(AS_IO).specific(m_sfr_space);
 
 	set_icountptr(m_icount);

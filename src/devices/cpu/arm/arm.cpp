@@ -498,10 +498,10 @@ void arm_cpu_device::device_start()
 	m_program = &space(AS_PROGRAM);
 
 	if(m_program->endianness() == ENDIANNESS_LITTLE) {
-		m_program->cache(m_cachele);
+		m_program->specific(m_cachele);
 		m_pr32 = [this](offs_t address) -> u32 { return m_cachele.read_dword(address); };
 	} else {
-		m_program->cache(m_cachebe);
+		m_program->specific(m_cachebe);
 		m_pr32 = [this](offs_t address) -> u32 { return m_cachebe.read_dword(address); };
 	}
 

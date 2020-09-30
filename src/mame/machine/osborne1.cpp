@@ -287,7 +287,7 @@ void osborne1_state::machine_start()
 
 	m_acia_rxc_txc_timer = machine().scheduler().timer_alloc(timer_expired_delegate(FUNC(osborne1_state::acia_rxc_txc_callback), this));
 
-	m_maincpu->space(AS_PROGRAM).cache(m_mem_cache);
+	m_maincpu->space(AS_PROGRAM).specific(m_mem_cache);
 
 	save_item(NAME(m_acia_rxc_txc_div));
 	save_item(NAME(m_acia_rxc_txc_p_low));

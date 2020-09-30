@@ -172,7 +172,7 @@ void dp8344_device::device_resolve_objects()
 void dp8344_device::device_start()
 {
 	// get memory spaces
-	space(AS_PROGRAM).cache(m_inst_cache);
+	space(AS_PROGRAM).specific(m_inst_cache);
 	space(AS_PROGRAM).specific(m_inst_space);
 	space(AS_DATA).specific(m_data_space);
 

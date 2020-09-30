@@ -546,8 +546,8 @@ void m6800_cpu_device::EAT_CYCLES()
 
 void m6800_cpu_device::device_start()
 {
-	space(AS_PROGRAM).cache(m_cprogram);
-	space(has_space(AS_OPCODES) ? AS_OPCODES : AS_PROGRAM).cache(m_copcodes);
+	space(AS_PROGRAM).specific(m_cprogram);
+	space(has_space(AS_OPCODES) ? AS_OPCODES : AS_PROGRAM).specific(m_copcodes);
 	space(AS_PROGRAM).specific(m_program);
 
 	m_pc.d = 0;

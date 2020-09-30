@@ -140,10 +140,10 @@ private:
 	address_space_config        m_boot_config;
 
 	// memory spaces
-	memory_access<16, 0, 0, ENDIANNESS_BIG>::cache m_ram_space;
-	memory_access<14, 0, 0, ENDIANNESS_BIG>::cache m_rom_space[3];
+	memory_access<16, 0, 0, ENDIANNESS_BIG>::specific m_ram_space;
+	memory_access<14, 0, 0, ENDIANNESS_BIG>::specific m_rom_space[3];
 	memory_access< 5, 0, 0, ENDIANNESS_BIG>::specific m_io_space[3];
-	memory_access< 7, 0, 0, ENDIANNESS_BIG>::cache m_boot_space;
+	memory_access< 7, 0, 0, ENDIANNESS_BIG>::specific m_boot_space;
 	uint16_t                    m_counter_mask;
 
 	// SAM state

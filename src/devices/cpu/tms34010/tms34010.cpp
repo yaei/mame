@@ -764,7 +764,7 @@ void tms34010_device::device_start()
 {
 	tms340x0_device::device_start();
 
-	space(AS_PROGRAM).cache(m_cache);
+	space(AS_PROGRAM).specific(m_cache);
 	space(AS_PROGRAM).specific(m_program);
 }
 
@@ -772,7 +772,7 @@ void tms34020_device::device_start()
 {
 	tms340x0_device::device_start();
 
-	space(AS_PROGRAM).cache(m_cache);
+	space(AS_PROGRAM).specific(m_cache);
 	space(AS_PROGRAM).specific(m_program);
 }
 

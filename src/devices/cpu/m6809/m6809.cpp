@@ -156,9 +156,9 @@ void m6809_base_device::device_start()
 	if (!m_mintf)
 		m_mintf = std::make_unique<mi_default>();
 
-	space(AS_PROGRAM).cache(m_mintf->cprogram);
+	space(AS_PROGRAM).specific(m_mintf->cprogram);
 	space(AS_PROGRAM).specific(m_mintf->program);
-	space(has_space(AS_OPCODES) ? AS_OPCODES : AS_PROGRAM).cache(m_mintf->csprogram);
+	space(has_space(AS_OPCODES) ? AS_OPCODES : AS_PROGRAM).specific(m_mintf->csprogram);
 
 	m_lic_func.resolve_safe();
 

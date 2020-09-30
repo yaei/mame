@@ -26,7 +26,7 @@ void bert_device::device_start()
 	save_item(NAME(m_step));
 	save_item(NAME(m_qlc_mode));
 	save_item(NAME(m_qlc_src));
-	m_memory_space->cache(m_memory);
+	m_memory_space->specific(m_memory);
 }
 
 void bert_device::device_reset()

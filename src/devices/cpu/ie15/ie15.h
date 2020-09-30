@@ -72,7 +72,7 @@ protected:
 	uint8_t   m_RF; // Current register page
 	uint8_t   m_flags; // temporary I/O only
 
-	memory_access<14, 0, 0, ENDIANNESS_LITTLE>::cache m_cache;
+	memory_access<14, 0, 0, ENDIANNESS_LITTLE>::specific m_cache;
 	memory_access<14, 0, 0, ENDIANNESS_LITTLE>::specific m_program;
 	memory_access< 8, 0, 0, ENDIANNESS_LITTLE>::specific m_io;
 };

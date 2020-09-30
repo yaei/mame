@@ -210,7 +210,7 @@ void unsp_device::device_start()
 
 	m_debugger_temp = 0;
 
-	space(AS_PROGRAM).cache(m_cache);
+	space(AS_PROGRAM).specific(m_cache);
 	space(AS_PROGRAM).specific(m_program);
 
 	uint32_t umlflags = 0;

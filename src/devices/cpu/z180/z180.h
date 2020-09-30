@@ -201,7 +201,7 @@ private:
 	uint8_t   m_int_pending[11 + 1];            // interrupt pending
 	uint8_t   m_after_EI;                       // are we in the EI shadow?
 	uint32_t  m_ea;
-	memory_access<20, 0, 0, ENDIANNESS_LITTLE>::cache m_cprogram, m_copcodes;
+	memory_access<20, 0, 0, ENDIANNESS_LITTLE>::specific m_cprogram, m_copcodes;
 	memory_access<20, 0, 0, ENDIANNESS_LITTLE>::specific m_program;
 	memory_access<16, 0, 0, ENDIANNESS_LITTLE>::specific m_io;
 	uint8_t   m_rtemp;

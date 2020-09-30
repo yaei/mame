@@ -170,7 +170,7 @@ sapphire_ioga_device::sapphire_ioga_device(const machine_config &mconfig, const 
 
 void interpro_ioga_device::device_start()
 {
-	m_memory_space->cache(m_memory);
+	m_memory_space->specific(m_memory);
 
 	// resolve callbacks
 	m_out_nmi_func.resolve();

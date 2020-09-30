@@ -233,8 +233,8 @@ protected:
 	unsigned m_fastROM;       /* SNES specific */
 	unsigned m_ir;            /* Instruction Register */
 	unsigned m_irq_delay;     /* delay 1 instruction before checking irq */
-	memory_access<24, 0, 0, ENDIANNESS_LITTLE>::cache m_program;
-	memory_access<24, 0, 0, ENDIANNESS_LITTLE>::cache m_opcode;
+	memory_access<24, 0, 0, ENDIANNESS_LITTLE>::specific m_program;
+	memory_access<24, 0, 0, ENDIANNESS_LITTLE>::specific m_opcode;
 	memory_access<24, 0, 0, ENDIANNESS_LITTLE>::specific m_data;
 
 	unsigned m_stopped;       /* Sets how the CPU is stopped */

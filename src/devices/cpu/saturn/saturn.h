@@ -137,7 +137,7 @@ private:
 	uint8_t   m_sleeping;       /* low-consumption state */
 	int     m_monitor_id;
 	int     m_monitor_in;
-	memory_access<20, 0, 0, ENDIANNESS_LITTLE>::cache m_cache;
+	memory_access<20, 0, 0, ENDIANNESS_LITTLE>::specific m_cache;
 	memory_access<20, 0, 0, ENDIANNESS_LITTLE>::specific m_program;
 	int m_icount;
 	int64_t m_debugger_temp;

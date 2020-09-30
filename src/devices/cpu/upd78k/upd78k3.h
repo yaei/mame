@@ -75,8 +75,8 @@ private:
 	address_space_config m_sfr_config;
 	required_shared_ptr<u16> m_iram;
 
-	memory_access<16, 0, 0, ENDIANNESS_LITTLE>::cache m_program_cache;
-	memory_access< 8, 1, 0, ENDIANNESS_LITTLE>::cache m_iram_cache;
+	memory_access<16, 0, 0, ENDIANNESS_LITTLE>::specific m_program_cache;
+	memory_access< 8, 1, 0, ENDIANNESS_LITTLE>::specific m_iram_cache;
 	memory_access<16, 0, 0, ENDIANNESS_LITTLE>::specific m_program_space;
 	memory_access< 8, 1, 0, ENDIANNESS_LITTLE>::specific m_sfr_space;
 

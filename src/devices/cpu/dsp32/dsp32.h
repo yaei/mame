@@ -416,7 +416,7 @@ protected:
 	int             m_icount;
 	uint8_t           m_lastpins;
 	uint32_t          m_ppc;
-	memory_access<24, 2, 0, ENDIANNESS_LITTLE>::cache m_cache;
+	memory_access<24, 2, 0, ENDIANNESS_LITTLE>::specific m_cache;
 	memory_access<24, 2, 0, ENDIANNESS_LITTLE>::specific m_program;
 
 	devcb_write32 m_output_pins_changed;

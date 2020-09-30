@@ -68,7 +68,7 @@ private:
 		u16      loopst = 0;
 	};
 
-	memory_access<16, 0, 0, ENDIANNESS_LITTLE>::cache m_cache;
+	memory_access<16, 0, 0, ENDIANNESS_LITTLE>::specific m_cache;
 	sound_stream*                                     m_stream;
 	pcm_channel                                       m_chan[NUM_CHANNELS];
 	u8                                                m_cbank;

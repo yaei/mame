@@ -129,7 +129,7 @@ protected:
 
 	int m_icount;
 
-	memory_access<32, 2, 0, ENDIANNESS_BIG>::cache m_cache;
+	memory_access<32, 2, 0, ENDIANNESS_BIG>::specific m_cache;
 	memory_access<32, 2, 0, ENDIANNESS_BIG>::specific m_program;
 
 	write32mo_delegate m_cmd_callback;
@@ -189,7 +189,7 @@ protected:
 
 	int m_icount;
 
-	memory_access<32, 2, 0, ENDIANNESS_BIG>::cache m_cache;
+	memory_access<32, 2, 0, ENDIANNESS_BIG>::specific m_cache;
 	memory_access<32, 2, 0, ENDIANNESS_BIG>::specific m_program;
 };
 

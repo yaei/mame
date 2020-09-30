@@ -405,7 +405,7 @@ void isbc202_device::device_start()
 	save_item(NAME(m_amwrt));
 	save_item(NAME(m_dlyd_amwrt));
 
-	space(AS_PROGRAM).cache(m_cache);
+	space(AS_PROGRAM).specific(m_cache);
 	set_icountptr(m_icount);
 	space(AS_PROGRAM).install_rom(0 , 0x1ff , memregion("microcode")->base());
 

@@ -1305,7 +1305,7 @@ void m68000_base_device::init8(address_space &space, address_space &ospace)
 {
 	m_space = &space;
 	m_ospace = &ospace;
-	ospace.cache(m_oprogram8);
+	ospace.specific(m_oprogram8);
 	space.specific(m_program8);
 
 	m_readimm16 = [this](offs_t address) -> u16  { return m_oprogram8.read_word(address); };
@@ -1325,7 +1325,7 @@ void m68000_base_device::init16(address_space &space, address_space &ospace)
 {
 	m_space = &space;
 	m_ospace = &ospace;
-	ospace.cache(m_oprogram16);
+	ospace.specific(m_oprogram16);
 	space.specific(m_program16);
 
 	m_readimm16 = [this](offs_t address) -> u16  { return m_oprogram16.read_word(address); };
@@ -1350,7 +1350,7 @@ void m68000_base_device::init32(address_space &space, address_space &ospace)
 {
 	m_space = &space;
 	m_ospace = &ospace;
-	ospace.cache(m_oprogram32);
+	ospace.specific(m_oprogram32);
 	space.specific(m_program32);
 
 	m_readimm16 = [this](offs_t address) -> u16 { return m_oprogram32.read_word(address); };
@@ -1409,7 +1409,7 @@ void m68000_base_device::init32mmu(address_space &space, address_space &ospace)
 {
 	m_space = &space;
 	m_ospace = &ospace;
-	ospace.cache(m_oprogram32);
+	ospace.specific(m_oprogram32);
 	space.specific(m_program32);
 
 	m_readimm16 = [this](offs_t address) -> u16 {
@@ -1579,7 +1579,7 @@ void m68000_base_device::init32hmmu(address_space &space, address_space &ospace)
 {
 	m_space = &space;
 	m_ospace = &ospace;
-	ospace.cache(m_oprogram32);
+	ospace.specific(m_oprogram32);
 	space.specific(m_program32);
 
 	m_readimm16 = [this](offs_t address) -> u16 {

@@ -82,7 +82,7 @@ protected:
 	int m_icount;
 	bool m_increment_pc;
 
-	memory_access<13, 1, -1, ENDIANNESS_BIG>::cache m_cache;
+	memory_access<13, 1, -1, ENDIANNESS_BIG>::specific m_cache;
 	memory_access<13, 1, -1, ENDIANNESS_BIG>::specific m_program;
 	memory_access< 9, 0,  0, ENDIANNESS_BIG>::specific m_io;
 

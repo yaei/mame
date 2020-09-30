@@ -176,7 +176,7 @@ protected:
 	std::vector<uint16_t> m_ipt_ram;
 	uint8_t   *m_lbrm;
 
-	memory_access<9, 3, -3, ENDIANNESS_BIG>::cache m_cache;
+	memory_access<9, 3, -3, ENDIANNESS_BIG>::specific m_cache;
 	memory_access<9, 3, -3, ENDIANNESS_BIG>::specific m_program;
 
 	int     m_icount;

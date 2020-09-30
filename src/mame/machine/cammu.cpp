@@ -196,10 +196,10 @@ void cammu_c3_device::device_start()
 		tlb_set.u = false;
 
 		tlb_set.w.ra = tlb_set.w.va = 0;
-		m_memory[ST0].space->cache(tlb_set.w.cache);
+		m_memory[ST0].space->specific(tlb_set.w.cache);
 
 		tlb_set.x.ra = tlb_set.x.va = 0;
-		m_memory[ST0].space->cache(tlb_set.x.cache);
+		m_memory[ST0].space->specific(tlb_set.x.cache);
 	}
 }
 
@@ -226,7 +226,7 @@ void cammu_device::set_spaces(address_space &main_space, address_space &io_space
 	m_memory[ST7].space = &main_space;
 
 	for (memory_t &memory : m_memory)
-		memory.space->cache(memory.cache);
+		memory.space->specific(memory.cache);
 }
 
 bool cammu_device::memory_translate(const u32 ssw, const int spacenum, const int intention, offs_t &address)

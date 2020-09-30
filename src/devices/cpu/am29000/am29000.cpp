@@ -130,9 +130,9 @@ device_memory_interface::space_config_vector am29000_cpu_device::memory_space_co
 
 void am29000_cpu_device::device_start()
 {
-	space(AS_PROGRAM).cache(m_cache);
+	space(AS_PROGRAM).specific(m_cache);
 	space(AS_PROGRAM).specific(m_program);
-	space(AS_DATA).cache(m_datacache);
+	space(AS_DATA).specific(m_datacache);
 	space(AS_DATA).specific(m_data);
 	space(AS_IO).specific(m_io);
 

@@ -108,8 +108,8 @@ void f8_cpu_device::state_string_export(const device_state_entry &entry, std::st
 
 void f8_cpu_device::device_start()
 {
-	space(AS_PROGRAM).cache(m_program);
-	space(AS_DATA).cache(m_r);
+	space(AS_PROGRAM).specific(m_program);
+	space(AS_DATA).specific(m_r);
 	space(AS_IO).specific(m_ios);
 
 	// zerofill

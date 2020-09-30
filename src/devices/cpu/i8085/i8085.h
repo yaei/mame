@@ -129,7 +129,7 @@ private:
 
 	bool m_ietemp;       /* import/export temp space */
 
-	memory_access<16, 0, 0, ENDIANNESS_LITTLE>::cache m_cprogram, m_copcodes;
+	memory_access<16, 0, 0, ENDIANNESS_LITTLE>::specific m_cprogram, m_copcodes;
 	memory_access<16, 0, 0, ENDIANNESS_LITTLE>::specific m_program;
 	memory_access< 8, 0, 0, ENDIANNESS_LITTLE>::specific m_io;
 	int m_icount;

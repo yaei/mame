@@ -492,7 +492,7 @@ inline void tms3203x_device::WMEM(offs_t addr, uint32_t data)
 void tms3203x_device::device_start()
 {
 	// find address spaces
-	space(AS_PROGRAM).cache(m_cache);
+	space(AS_PROGRAM).specific(m_cache);
 	space(AS_PROGRAM).specific(m_program);
 
 	// resolve devcb handlers

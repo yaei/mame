@@ -91,7 +91,7 @@ void mb86235_device::execute_run()
 
 void mb86235_device::device_start()
 {
-	space(AS_PROGRAM).cache(m_pcache);
+	space(AS_PROGRAM).specific(m_pcache);
 	space(AS_PROGRAM).specific(m_program);
 	space(AS_DATA).specific(m_dataa);
 	space(AS_IO).specific(m_datab);

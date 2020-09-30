@@ -835,7 +835,7 @@ void tms32010_device::device_start()
 	save_item(NAME(m_memaccess));
 	save_item(NAME(m_addr_mask));
 
-	space(AS_PROGRAM).cache(m_cache);
+	space(AS_PROGRAM).specific(m_cache);
 	space(AS_PROGRAM).specific(m_program);
 	space(AS_DATA).specific(m_data);
 	space(AS_IO).specific(m_io);

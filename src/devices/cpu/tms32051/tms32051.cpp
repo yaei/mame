@@ -186,7 +186,7 @@ void tms32051_device::delay_slot(uint16_t startpc)
 
 void tms32051_device::device_start()
 {
-	space(AS_PROGRAM).cache(m_cache);
+	space(AS_PROGRAM).specific(m_cache);
 	space(AS_PROGRAM).specific(m_program);
 	space(AS_DATA).specific(m_data);
 	space(AS_IO).specific(m_io);

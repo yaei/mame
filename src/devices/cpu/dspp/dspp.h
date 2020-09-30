@@ -199,7 +199,7 @@ private:
 	// Address spaces
 	const address_space_config  m_code_config;
 	const address_space_config  m_data_config;
-	memory_access<10, 1, -1, ENDIANNESS_BIG>::cache m_code_cache;
+	memory_access<10, 1, -1, ENDIANNESS_BIG>::specific m_code_cache;
 	memory_access<10, 1, -1, ENDIANNESS_BIG>::specific m_code;
 	memory_access<10, 1, -1, ENDIANNESS_BIG>::specific m_data;
 

@@ -1837,7 +1837,7 @@ void psxcpu_device::device_start()
 {
 	// get our address spaces
 	m_program = &space( AS_PROGRAM );
-	m_program->cache(m_instruction);
+	m_program->specific(m_instruction);
 	m_program->specific(m_data);
 
 	save_item( NAME( m_op ) );

@@ -142,8 +142,8 @@ void vr0sound_device::device_start()
 	m_irq_cb.resolve_safe();
 
 	// Find our direct access
-	space(AS_TEXTURE).cache(m_texcache);
-	space(AS_FRAME).cache(m_fbcache);
+	space(AS_TEXTURE).specific(m_texcache);
+	space(AS_FRAME).specific(m_fbcache);
 	m_texcache_ctrl = &m_fbcache;
 	for (auto &elem : m_channel)
 		elem.Cache = &m_fbcache;

@@ -347,9 +347,9 @@ void i8085a_cpu_device::device_start()
 		}
 	}
 
-	space(AS_PROGRAM).cache(m_cprogram);
+	space(AS_PROGRAM).specific(m_cprogram);
 	space(AS_PROGRAM).specific(m_program);
-	space(has_space(AS_OPCODES) ? AS_OPCODES : AS_PROGRAM).cache(m_copcodes);
+	space(has_space(AS_OPCODES) ? AS_OPCODES : AS_PROGRAM).specific(m_copcodes);
 	space(AS_IO).specific(m_io);
 
 	/* resolve callbacks */

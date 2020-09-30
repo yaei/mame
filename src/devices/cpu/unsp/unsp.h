@@ -287,7 +287,7 @@ private:
 
 
 	address_space_config m_program_config;
-	memory_access<23, 1, -1, ENDIANNESS_BIG>::cache m_cache;
+	memory_access<23, 1, -1, ENDIANNESS_BIG>::specific m_cache;
 	memory_access<23, 1, -1, ENDIANNESS_BIG>::specific m_program;
 
 	uint32_t m_debugger_temp;

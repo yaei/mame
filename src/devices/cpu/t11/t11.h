@@ -93,7 +93,7 @@ protected:
 	bool                m_power_fail;
 	bool                m_ext_halt;
 	int                 m_icount;
-	memory_access<16, 1, 0, ENDIANNESS_LITTLE>::cache m_cache;
+	memory_access<16, 1, 0, ENDIANNESS_LITTLE>::specific m_cache;
 	memory_access<16, 1, 0, ENDIANNESS_LITTLE>::specific m_program;
 
 	devcb_write_line    m_out_reset_func;

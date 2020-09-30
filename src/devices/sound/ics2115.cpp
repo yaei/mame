@@ -59,7 +59,7 @@ void ics2115_device::device_start()
 	if (m_rom && !has_configured_map(0))
 		space(0).install_rom(0, std::min<offs_t>((1 << 24) - 1, m_rom.bytes()), m_rom.target());
 
-	space(0).cache(m_cache);
+	space(0).specific(m_cache);
 
 	m_timer[0].timer = machine().scheduler().timer_alloc(timer_expired_delegate(FUNC(ics2115_device::timer_cb_0),this), this);
 	m_timer[1].timer = machine().scheduler().timer_alloc(timer_expired_delegate(FUNC(ics2115_device::timer_cb_1),this), this);

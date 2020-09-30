@@ -1256,7 +1256,7 @@ void z8_device::device_start()
 	}
 
 	/* find address spaces */
-	space(AS_PROGRAM).cache(m_cache);
+	space(AS_PROGRAM).specific(m_cache);
 	space(AS_PROGRAM).specific(m_program);
 	space(has_space(AS_DATA) ? AS_DATA : AS_PROGRAM).specific(m_data);
 	space(AS_IO).specific(m_regs);

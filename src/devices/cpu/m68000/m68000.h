@@ -261,9 +261,9 @@ protected:
 
 	address_space *m_program, *m_oprogram, *m_cpu_space;
 
-	memory_access<24, 0, 0, ENDIANNESS_BIG>::cache m_oprogram8;
-	memory_access<24, 1, 0, ENDIANNESS_BIG>::cache m_oprogram16;
-	memory_access<32, 2, 0, ENDIANNESS_BIG>::cache m_oprogram32;
+	memory_access<24, 0, 0, ENDIANNESS_BIG>::specific m_oprogram8;
+	memory_access<24, 1, 0, ENDIANNESS_BIG>::specific m_oprogram16;
+	memory_access<32, 2, 0, ENDIANNESS_BIG>::specific m_oprogram32;
 	memory_access<24, 0, 0, ENDIANNESS_BIG>::specific m_program8;
 	memory_access<24, 1, 0, ENDIANNESS_BIG>::specific m_program16;
 	memory_access<32, 2, 0, ENDIANNESS_BIG>::specific m_program32;

@@ -887,7 +887,7 @@ void pic16c62x_device::build_opcode_table(void)
 
 void pic16c62x_device::device_start()
 {
-	space(AS_PROGRAM).cache(m_cache);
+	space(AS_PROGRAM).specific(m_cache);
 	space(AS_PROGRAM).specific(m_program);
 	space(AS_DATA).specific(m_data);
 	space(AS_IO).specific(m_io);

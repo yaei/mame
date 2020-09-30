@@ -141,7 +141,7 @@ void mcs40_cpu_device_base::device_start()
 	m_spaces[AS_RAM_STATUS]     = &space(AS_RAM_STATUS);
 	m_spaces[AS_RAM_PORTS]      = &space(AS_RAM_PORTS);
 	m_spaces[AS_PROGRAM_MEMORY] = &space(AS_PROGRAM_MEMORY);
-	m_spaces[AS_ROM]->cache(m_cache);
+	m_spaces[AS_ROM]->specific(m_cache);
 
 	m_bus_cycle_cb.resolve();
 	m_sync_cb.resolve_safe();

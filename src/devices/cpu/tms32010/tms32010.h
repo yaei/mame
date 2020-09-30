@@ -101,7 +101,7 @@ private:
 	uint16_t  m_memaccess;
 	int     m_addr_mask;
 
-	memory_access<12, 1, -1, ENDIANNESS_BIG>::cache m_cache;
+	memory_access<12, 1, -1, ENDIANNESS_BIG>::specific m_cache;
 	memory_access<12, 1, -1, ENDIANNESS_BIG>::specific m_program;
 	memory_access< 8, 1, -1, ENDIANNESS_BIG>::specific m_data;
 	memory_access< 4, 1, -1, ENDIANNESS_BIG>::specific m_io;

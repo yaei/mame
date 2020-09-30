@@ -99,7 +99,7 @@ private:
 	const char *m_sound_region_tag;
 	u16 *m_sound_data;
 
-	memory_access<9, 3, -3, ENDIANNESS_BIG>::cache m_cache;
+	memory_access<9, 3, -3, ENDIANNESS_BIG>::specific m_cache;
 	memory_access<9, 3, -3, ENDIANNESS_BIG>::specific m_program;
 
 	int m_icount;
@@ -209,7 +209,7 @@ private:
 	u8 m_rc;
 	u8 m_clkcnt;
 
-	memory_access<9, 3, -3, ENDIANNESS_BIG>::cache m_cache;
+	memory_access<9, 3, -3, ENDIANNESS_BIG>::specific m_cache;
 	memory_access<9, 3, -3, ENDIANNESS_BIG>::specific m_program;
 	int m_icount;
 
@@ -326,7 +326,7 @@ private:
 	u32  m_e_stack[32768];   /* Stack DRAM: 32kx20 */
 	u32  m_o_stack[32768];   /* Stack DRAM: 32kx20 */
 
-	memory_access<9, 3, -3, ENDIANNESS_BIG>::cache m_cache;
+	memory_access<9, 3, -3, ENDIANNESS_BIG>::specific m_cache;
 	memory_access<9, 3, -3, ENDIANNESS_BIG>::specific m_program;
 	int m_icount;
 

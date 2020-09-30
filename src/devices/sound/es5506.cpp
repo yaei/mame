@@ -256,7 +256,7 @@ void es5506_device::device_start()
 		space(3).install_rom(0, std::min<offs_t>((1 << ADDRESS_INTEGER_BIT_ES5506) - 1, (m_region3->bytes() / 2) - 1), m_region3->base());
 
 	for (int s = 0; s < 4; s++)
-		space(s).cache(m_cache[s]);
+		space(s).specific(m_cache[s]);
 
 	// compute the tables
 	compute_tables(VOLUME_BIT_ES5506, 4, 8); // 4 bit exponent, 8 bit mantissa
@@ -379,7 +379,7 @@ void es5505_device::device_start()
 		space(1).install_rom(0, std::min<offs_t>((1 << ADDRESS_INTEGER_BIT_ES5505) - 1, (m_region1->bytes() / 2) - 1), m_region1->base());
 
 	for (int s = 0; s < 2; s++)
-		space(s).cache(m_cache[s]);
+		space(s).specific(m_cache[s]);
 
 	// compute the tables
 	compute_tables(VOLUME_BIT_ES5505, 4, 4); // 4 bit exponent, 4 bit mantissa

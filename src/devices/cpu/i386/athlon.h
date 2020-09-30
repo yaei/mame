@@ -56,7 +56,7 @@ private:
 
 	address_space_config m_data_config;
 	address_space_config m_opcodes_config;
-	memory_access<32, 2, 0, ENDIANNESS_LITTLE>::cache mmacache32;
+	memory_access<32, 2, 0, ENDIANNESS_LITTLE>::specific mmacache32;
 	memory_access<32, 2, 0, ENDIANNESS_LITTLE>::specific m_opcodes;
 	memory_access<32, 2, 0, ENDIANNESS_LITTLE>::specific m_data;
 	uint8_t m_processor_name_string[48];

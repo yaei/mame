@@ -39,7 +39,7 @@ private:
 	// address spaces
 	address_space_config m_program_config;
 	address_space_config m_data_config;
-	memory_access<16, 0, 0, ENDIANNESS_BIG>::cache m_cache;
+	memory_access<16, 0, 0, ENDIANNESS_BIG>::specific m_cache;
 	memory_access<16, 0, 0, ENDIANNESS_LITTLE>::specific m_data;
 
 	// internal state

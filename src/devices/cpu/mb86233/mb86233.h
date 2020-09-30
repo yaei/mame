@@ -88,7 +88,7 @@ private:
 	address_space_config m_io_config;
 	address_space_config m_rf_config;
 
-	memory_access<16, 2, -2, ENDIANNESS_LITTLE>::cache m_cache;
+	memory_access<16, 2, -2, ENDIANNESS_LITTLE>::specific m_cache;
 	memory_access<16, 2, -2, ENDIANNESS_LITTLE>::specific m_program;
 	memory_access<16, 2, -2, ENDIANNESS_LITTLE>::specific m_data;
 	memory_access<16, 2, -2, ENDIANNESS_LITTLE>::specific m_io;

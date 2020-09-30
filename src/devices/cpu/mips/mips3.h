@@ -399,10 +399,10 @@ protected:
 	uint8_t *m_icache;
 
 	address_space_config m_program_config;
-	memory_access<32, 2, 0, ENDIANNESS_LITTLE>::cache m_cache32le;
-	memory_access<32, 3, 0, ENDIANNESS_LITTLE>::cache m_cache64le;
-	memory_access<32, 2, 0, ENDIANNESS_BIG>::cache m_cache32be;
-	memory_access<32, 3, 0, ENDIANNESS_BIG>::cache m_cache64be;
+	memory_access<32, 2, 0, ENDIANNESS_LITTLE>::specific m_cache32le;
+	memory_access<32, 3, 0, ENDIANNESS_LITTLE>::specific m_cache64le;
+	memory_access<32, 2, 0, ENDIANNESS_BIG>::specific m_cache32be;
+	memory_access<32, 3, 0, ENDIANNESS_BIG>::specific m_cache64be;
 
 	mips3_flavor    m_flavor;
 

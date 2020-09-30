@@ -436,7 +436,7 @@ void aica_device::Init()
 	m_MidiOutR = m_MidiOutW = 0;
 
 	space().specific(m_DSP.space);
-	space().cache(m_DSP.cache);
+	space().specific(m_DSP.cache);
 	m_timerA = machine().scheduler().timer_alloc(timer_expired_delegate(FUNC(aica_device::timerA_cb), this));
 	m_timerB = machine().scheduler().timer_alloc(timer_expired_delegate(FUNC(aica_device::timerB_cb), this));
 	m_timerC = machine().scheduler().timer_alloc(timer_expired_delegate(FUNC(aica_device::timerC_cb), this));
@@ -1399,7 +1399,7 @@ void aica_device::sound_stream_update(sound_stream &stream, std::vector<read_str
 void aica_device::device_start()
 {
 	space().specific(m_data);
-	space().cache(m_cache);
+	space().specific(m_cache);
 
 	// init the emulation
 	Init();

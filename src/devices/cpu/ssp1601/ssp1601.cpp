@@ -521,7 +521,7 @@ void ssp1601_device::device_start()
 	m_g_cycles = 0;
 
 	m_gr[0].w.h = 0xffff; // constant reg
-	space(AS_PROGRAM).cache(m_cache);
+	space(AS_PROGRAM).specific(m_cache);
 	space(AS_PROGRAM).specific(m_program);
 	space(AS_IO).specific(m_io);
 

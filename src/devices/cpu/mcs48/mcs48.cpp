@@ -1111,7 +1111,7 @@ void mcs48_cpu_device::device_start()
 	/* FIXME: Current implementation suboptimal */
 	m_ea = (m_int_rom_size ? 0 : 1);
 
-	space(AS_PROGRAM).cache(m_program);
+	space(AS_PROGRAM).specific(m_program);
 	space(AS_DATA).specific(m_data);
 	if(m_feature_mask & EXT_BUS_FEATURE)
 		space(AS_IO).specific(m_io);

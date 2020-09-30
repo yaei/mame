@@ -158,7 +158,7 @@ void dspp_device::device_start()
 	m_dma_write_handler.resolve_safe();
 
 	// Get our address spaces
-	space(AS_PROGRAM).cache(m_code_cache);
+	space(AS_PROGRAM).specific(m_code_cache);
 	space(AS_PROGRAM).specific(m_code);
 	space(AS_DATA).specific(m_data);
 

@@ -72,7 +72,7 @@ protected:
 	int m_icount;
 
 	// address spaces
-	memory_access<9, 1, -1, ENDIANNESS_LITTLE>::cache m_cache;
+	memory_access<9, 1, -1, ENDIANNESS_LITTLE>::specific m_cache;
 	memory_access<9, 1, -1, ENDIANNESS_LITTLE>::specific m_program;
 	memory_access<5, 0,  0, ENDIANNESS_LITTLE>::specific m_data;
 

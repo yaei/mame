@@ -381,7 +381,7 @@ void rsp_device::device_start()
 	if (LOG_INSTRUCTION_EXECUTION)
 		m_exec_output = fopen("rsp_execute.txt", "wt");
 
-	space(AS_PROGRAM).cache(m_pcache);
+	space(AS_PROGRAM).specific(m_pcache);
 	space(AS_PROGRAM).specific(m_program);
 	resolve_cb();
 

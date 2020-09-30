@@ -51,7 +51,7 @@ void ks0164_device::device_start()
 	}
 
 	m_stream = stream_alloc(0, 2, clock()/3/2/2/32);
-	space().cache(m_mem_cache);
+	space().specific(m_mem_cache);
 	m_timer = timer_alloc(0);
 
 	save_item(NAME(m_bank1_base));

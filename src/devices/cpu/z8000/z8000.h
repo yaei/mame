@@ -146,8 +146,8 @@ protected:
 	int m_irq_state[2];   /* IRQ line states (NVI, VI) */
 	int m_mi;
 	bool m_halt;
-	memory_access<23, 1, 0, ENDIANNESS_BIG>::cache m_cache;
-	memory_access<23, 1, 0, ENDIANNESS_BIG>::cache m_opcache;
+	memory_access<23, 1, 0, ENDIANNESS_BIG>::specific m_cache;
+	memory_access<23, 1, 0, ENDIANNESS_BIG>::specific m_opcache;
 	memory_access<23, 1, 0, ENDIANNESS_BIG>::specific m_program;
 	memory_access<23, 1, 0, ENDIANNESS_BIG>::specific m_data;
 	memory_access<23, 1, 0, ENDIANNESS_BIG>::specific m_stack;

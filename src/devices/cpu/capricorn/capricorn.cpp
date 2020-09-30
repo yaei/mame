@@ -172,7 +172,7 @@ void capricorn_cpu_device::device_start()
 	// Flags
 	state_add(STATE_GENFLAGS , "GENFLAGS" , m_flags).noshow().formatstr("%9s");
 
-	space(AS_PROGRAM).cache(m_cache);
+	space(AS_PROGRAM).specific(m_cache);
 	space(AS_PROGRAM).specific(m_program);
 
 	save_item(NAME(m_reg));

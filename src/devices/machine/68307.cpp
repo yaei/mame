@@ -130,7 +130,7 @@ inline int m68307_cpu_device::calc_cs(offs_t address) const
 void m68307_cpu_device::init16_m68307(address_space &space)
 {
 	m_space = &space;
-	space.cache(m_oprogram16);
+	space.specific(m_oprogram16);
 	space.specific(m_program16);
 
 	m_readimm16 = [this](offs_t address) -> u16 { /* m_m68307_currentcs = calc_cs(address); */ return m_oprogram16.read_word(address); };

@@ -3404,8 +3404,8 @@ void z80_device::device_start()
 	m_after_ldair = 0;
 	m_ea = 0;
 
-	space(AS_PROGRAM).cache(m_args);
-	space(has_space(AS_OPCODES) ? AS_OPCODES : AS_PROGRAM).cache(m_opcodes);
+	space(AS_PROGRAM).specific(m_args);
+	space(has_space(AS_OPCODES) ? AS_OPCODES : AS_PROGRAM).specific(m_opcodes);
 	space(AS_PROGRAM).specific(m_data);
 	space(AS_IO).specific(m_io);
 

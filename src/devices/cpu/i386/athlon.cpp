@@ -30,7 +30,7 @@ void athlonxp_device::device_start()
 	register_state_i386_x87_xmm();
 	space(AS_DATA).specific(m_data);
 	space(AS_OPCODES).specific(m_opcodes);
-	space(AS_DATA).cache(mmacache32);
+	space(AS_DATA).specific(mmacache32);
 
 	space(AS_OPCODES).install_read_handler(0, 0xffffffff, read32sm_delegate(*this, FUNC(athlonxp_device::debug_read_memory)));
 

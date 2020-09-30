@@ -744,7 +744,7 @@ void S3C24_CLASS_NAME::s3c24xx_video_start()
 	m_lcd.bitmap[0] = std::make_unique<bitmap_rgb32>(m_screen->width(), m_screen->height());
 	m_lcd.bitmap[1] = std::make_unique<bitmap_rgb32>(m_screen->width(), m_screen->height());
 
-	m_cpu->space(AS_PROGRAM).cache(m_cache);
+	m_cpu->space(AS_PROGRAM).specific(m_cache);
 }
 
 void S3C24_CLASS_NAME::bitmap_blend( bitmap_rgb32 &bitmap_dst, bitmap_rgb32 &bitmap_src_1, bitmap_rgb32 &bitmap_src_2)

@@ -155,7 +155,7 @@ void ns32000_device::device_start()
 void ns32000_device::device_reset()
 {
 	for (std::pair<int, address_space_config const *> s : memory_space_config())
-		space(has_configured_map(s.first) ? s.first : 0).cache(m_bus[s.first]);
+		space(has_configured_map(s.first) ? s.first : 0).specific(m_bus[s.first]);
 
 	m_pc = 0;
 	m_psr = 0;

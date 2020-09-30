@@ -44,7 +44,7 @@ device_memory_interface::space_config_vector mn1880_device::memory_space_config(
 
 void mn1880_device::device_start()
 {
-	space(AS_PROGRAM).cache(m_cache);
+	space(AS_PROGRAM).specific(m_cache);
 	space(AS_DATA).specific(m_data);
 	set_icountptr(m_icount);
 

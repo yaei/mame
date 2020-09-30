@@ -157,7 +157,7 @@ s_dsp_device::s_dsp_device(const machine_config &mconfig, const char *tag, devic
 void s_dsp_device::device_start()
 {
 	// Find our direct access
-	space().cache(m_cache);
+	space().specific(m_cache);
 	space().specific(m_data);
 
 	m_channel = stream_alloc(0, 2, clock() / 64);

@@ -629,9 +629,9 @@ protected:
 	uint32_t          m_exec_pc;
 	uint32_t          m_next_pc;
 
-	memory_access<32, 2, 0, ENDIANNESS_BIG>::cache m_cache;
+	memory_access<32, 2, 0, ENDIANNESS_BIG>::specific m_cache;
 	memory_access<32, 2, 0, ENDIANNESS_BIG>::specific m_program;
-	memory_access<32, 2, 0, ENDIANNESS_BIG>::cache m_datacache;
+	memory_access<32, 2, 0, ENDIANNESS_BIG>::specific m_datacache;
 	memory_access<32, 2, 0, ENDIANNESS_BIG>::specific m_data;
 	memory_access<32, 2, 0, ENDIANNESS_BIG>::specific m_io;
 

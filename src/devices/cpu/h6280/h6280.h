@@ -380,7 +380,7 @@ protected:
 	uint8_t m_timer_scale;
 
 	// address spaces
-	memory_access<21, 0, 0, ENDIANNESS_LITTLE>::cache m_cache;
+	memory_access<21, 0, 0, ENDIANNESS_LITTLE>::specific m_cache;
 	memory_access<21, 0, 0, ENDIANNESS_LITTLE>::specific m_program;
 	memory_access< 2, 0, 0, ENDIANNESS_LITTLE>::specific m_io;
 

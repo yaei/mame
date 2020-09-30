@@ -231,7 +231,7 @@ void dsp16_device_base::device_start()
 	m_spaces[AS_PROGRAM] = &space(AS_PROGRAM);
 	m_spaces[AS_DATA] = &space(AS_DATA);
 	m_spaces[AS_IO] = &space(AS_IO);
-	m_spaces[AS_PROGRAM]->cache(m_pcache);
+	m_spaces[AS_PROGRAM]->specific(m_pcache);
 	m_workram_mask = u16((m_workram.bytes() >> 1) - 1);
 
 	if (allow_drc())

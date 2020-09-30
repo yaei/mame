@@ -52,9 +52,9 @@ device_memory_interface::space_config_vector vt61_cpu_device::memory_space_confi
 
 void vt61_cpu_device::device_start()
 {
-	space(AS_PROGRAM).cache(m_program_cache);
-	space(AS_DATA).cache(m_memory_cache);
-	space(AS_IDR).cache(m_idr_cache);
+	space(AS_PROGRAM).specific(m_program_cache);
+	space(AS_DATA).specific(m_memory_cache);
+	space(AS_IDR).specific(m_idr_cache);
 
 	set_icountptr(m_icount);
 

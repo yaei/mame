@@ -81,7 +81,7 @@ protected:
 
 	uint8_t m_PARITY[256];
 
-	memory_access<14, 0, 0, ENDIANNESS_LITTLE>::cache m_cache;
+	memory_access<14, 0, 0, ENDIANNESS_LITTLE>::specific m_cache;
 	memory_access<14, 0, 0, ENDIANNESS_LITTLE>::specific m_program;
 	memory_access< 5, 0, 0, ENDIANNESS_LITTLE>::specific m_io;
 };

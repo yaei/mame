@@ -77,7 +77,7 @@ rf5c164_device::rf5c164_device(const machine_config &mconfig, const char *tag, d
 void rf5c68_device::device_start()
 {
 	// Find our direct access
-	space(0).cache(m_cache);
+	space(0).specific(m_cache);
 	m_sample_end_cb.resolve();
 
 	/* allocate the stream */

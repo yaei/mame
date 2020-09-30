@@ -824,7 +824,7 @@ void s2650_device::device_start()
 	m_flag_handler.resolve_safe();
 	m_intack_handler.resolve_safe(0x00);
 
-	space(AS_PROGRAM).cache(m_cprogram);
+	space(AS_PROGRAM).specific(m_cprogram);
 	space(AS_PROGRAM).specific(m_program);
 	space(AS_DATA).specific(m_data);
 	space(AS_IO).specific(m_io);

@@ -172,7 +172,7 @@ private:
 	std::unique_ptr<drcuml_state> m_drcuml;
 	std::unique_ptr<mb86235_frontend> m_drcfe;
 
-	memory_access<32, 3, -3, ENDIANNESS_LITTLE>::cache m_pcache;
+	memory_access<32, 3, -3, ENDIANNESS_LITTLE>::specific m_pcache;
 	memory_access<32, 3, -3, ENDIANNESS_LITTLE>::specific m_program;
 	memory_access<24, 2, -2, ENDIANNESS_LITTLE>::specific m_dataa;
 	memory_access<10, 2, -2, ENDIANNESS_LITTLE>::specific m_datab;

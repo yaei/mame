@@ -102,8 +102,8 @@ private:
 	uint8_t   m_halted;
 
 	address_space *m_program;
-	memory_access<24, 0, 0, ENDIANNESS_LITTLE>::cache m_cache8;
-	memory_access<24, 1, 0, ENDIANNESS_LITTLE>::cache m_cache16;
+	memory_access<24, 0, 0, ENDIANNESS_LITTLE>::specific m_cache8;
+	memory_access<24, 1, 0, ENDIANNESS_LITTLE>::specific m_cache16;
 
 	std::function<u8 (offs_t address)> m_dr8;
 	address_space *m_io;

@@ -99,7 +99,7 @@ private:
 
 	devcb_read8 m_in_func;
 
-	memory_access<16, 0, 0, ENDIANNESS_LITTLE>::cache m_cache;
+	memory_access<16, 0, 0, ENDIANNESS_LITTLE>::specific m_cache;
 	memory_access<16, 0, 0, ENDIANNESS_LITTLE>::specific m_program; // ME0
 	memory_access<16, 0, 0, ENDIANNESS_LITTLE>::specific m_io;      // ME1
 

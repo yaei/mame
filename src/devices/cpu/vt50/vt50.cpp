@@ -193,8 +193,8 @@ void vt52_cpu_device::device_resolve_objects()
 void vt5x_cpu_device::device_start()
 {
 	// acquire address spaces
-	space(AS_PROGRAM).cache(m_rom_cache);
-	space(AS_DATA).cache(m_ram_cache);
+	space(AS_PROGRAM).specific(m_rom_cache);
+	space(AS_DATA).specific(m_ram_cache);
 
 	screen().register_screen_bitmap(m_bitmap);
 	set_icountptr(m_icount);

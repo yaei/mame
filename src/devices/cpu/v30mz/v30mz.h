@@ -189,7 +189,7 @@ protected:
 	uint8_t   m_no_interrupt;
 	uint8_t   m_fire_trap;
 
-	memory_access<20, 0, 0, ENDIANNESS_LITTLE>::cache m_cache;
+	memory_access<20, 0, 0, ENDIANNESS_LITTLE>::specific m_cache;
 	memory_access<20, 0, 0, ENDIANNESS_LITTLE>::specific m_program;
 	memory_access<16, 0, 0, ENDIANNESS_LITTLE>::specific m_io;
 	int m_icount;

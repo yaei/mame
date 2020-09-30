@@ -2245,7 +2245,7 @@ void i960_cpu_device::execute_set_input(int irqline, int state)
 
 void i960_cpu_device::device_start()
 {
-	space(AS_PROGRAM).cache(m_cache);
+	space(AS_PROGRAM).specific(m_cache);
 	space(AS_PROGRAM).specific(m_program);
 
 	save_item(NAME(m_IP));

@@ -145,8 +145,8 @@ std::unique_ptr<util::disasm_interface> hd641016_device::create_disassembler()
 void hd641016_device::device_start()
 {
 	space(AS_PROGRAM).specific(m_program);
-	space(AS_PROGRAM).cache(m_cache);
-	space(AS_DATA).cache(m_data);
+	space(AS_PROGRAM).specific(m_cache);
+	space(AS_DATA).specific(m_data);
 	space(AS_IO).specific(m_io);
 
 	set_icountptr(m_icount);

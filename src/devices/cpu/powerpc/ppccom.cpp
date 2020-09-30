@@ -722,24 +722,24 @@ void ppc_device::device_start()
 	m_program = &space(AS_PROGRAM);
 	if(m_cap & PPCCAP_4XX)
 	{
-		m_program->cache(m_cache32);
+		m_program->specific(m_cache32);
 		m_pr32 = [this](offs_t address) -> u32 { return m_cache32.read_dword(address); };
-		m_prptr = [this](offs_t address) -> const void * { return m_cache32.read_ptr(address); };
+		m_prptr = [this](offs_t address) -> const void * { return m_program->get_read_ptr(address); };
 	}
 	else
 	{
-		m_program->cache(m_cache64);
+		m_program->specific(m_cache64);
 		m_pr32 = [this](offs_t address) -> u32 { return m_cache64.read_dword(address); };
 		if(space_config()->m_endianness != ENDIANNESS_NATIVE)
 			m_prptr = [this](offs_t address) -> const void * {
-				const u32 *ptr = static_cast<u32 *>(m_cache64.read_ptr(address & ~7));
+				const u32 *ptr = static_cast<u32 *>(m_program->get_read_ptr(address & ~7));
 				if(!(address & 4))
 					ptr++;
 				return ptr;
 			};
 		else
 			m_prptr = [this](offs_t address) -> const void * {
-				const u32 *ptr = static_cast<u32 *>(m_cache64.read_ptr(address & ~7));
+				const u32 *ptr = static_cast<u32 *>(m_program->get_read_ptr(address & ~7));
 				if(address & 4)
 					ptr++;
 				return ptr;

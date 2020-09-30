@@ -51,7 +51,7 @@ device_memory_interface::space_config_vector cr16b_device::memory_space_config()
 
 void cr16b_device::device_start()
 {
-	space(AS_PROGRAM).cache(m_cache);
+	space(AS_PROGRAM).specific(m_cache);
 	space(AS_PROGRAM).specific(m_space);
 
 	set_icountptr(m_icount);

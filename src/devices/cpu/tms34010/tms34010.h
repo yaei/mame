@@ -1037,7 +1037,7 @@ protected:
 	virtual void TMS34010_WRMEM_DWORD(offs_t A, uint32_t V) override;
 
 private:
-	memory_access<32, 1, 3, ENDIANNESS_LITTLE>::cache m_cache;
+	memory_access<32, 1, 3, ENDIANNESS_LITTLE>::specific m_cache;
 	memory_access<32, 1, 3, ENDIANNESS_LITTLE>::specific m_program;
 };
 
@@ -1072,7 +1072,7 @@ protected:
 	virtual void TMS34010_WRMEM_DWORD(offs_t A, uint32_t V) override;
 
 private:
-	memory_access<32, 2, 3, ENDIANNESS_LITTLE>::cache m_cache;
+	memory_access<32, 2, 3, ENDIANNESS_LITTLE>::specific m_cache;
 	memory_access<32, 2, 3, ENDIANNESS_LITTLE>::specific m_program;
 };
 

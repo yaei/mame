@@ -573,14 +573,14 @@ void z8002_device::register_save_state()
 
 void z8002_device::init_spaces()
 {
-	space(AS_PROGRAM).cache(m_cache);
+	space(AS_PROGRAM).specific(m_cache);
 	space(AS_PROGRAM).specific(m_program);
 
 	/* If the system decodes STn lines to distinguish between data and program memory fetches,
 	   install the data space. If it doesn't, install the program memory into data memory space. */
 	space(has_space(AS_DATA) ? AS_DATA : AS_PROGRAM).specific(m_data);
 	space(has_space(AS_STACK) ? AS_STACK : has_space(AS_DATA) ? AS_DATA : AS_PROGRAM).specific(m_stack);
-	space(has_space(AS_OPCODES) ? AS_OPCODES : AS_PROGRAM).cache(m_opcache);
+	space(has_space(AS_OPCODES) ? AS_OPCODES : AS_PROGRAM).specific(m_opcache);
 	space(AS_IO).specific(m_io);
 	space(has_space(AS_SIO) ? AS_SIO : AS_IO).specific(m_sio);
 }

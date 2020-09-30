@@ -333,7 +333,7 @@ protected:
 	const struct opcode_s *m_op64;
 	const struct opcode_s *m_op70;
 	const struct opcode_s *m_op74;
-	memory_access<16, 0, 0, ENDIANNESS_LITTLE>::cache m_opcodes;
+	memory_access<16, 0, 0, ENDIANNESS_LITTLE>::specific m_opcodes;
 	memory_access<16, 0, 0, ENDIANNESS_LITTLE>::specific m_program;
 	int m_icount;
 

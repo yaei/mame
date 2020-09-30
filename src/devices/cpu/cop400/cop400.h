@@ -184,7 +184,7 @@ protected:
 	bool m_has_counter;
 	bool m_has_inil;
 
-	memory_access<11, 0, 0, ENDIANNESS_LITTLE>::cache m_program;
+	memory_access<11, 0, 0, ENDIANNESS_LITTLE>::specific m_program;
 	memory_access< 7, 0, 0, ENDIANNESS_LITTLE>::specific m_data;
 
 	uint8_t m_featuremask;

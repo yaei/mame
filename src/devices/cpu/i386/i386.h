@@ -307,8 +307,8 @@ protected:
 	address_space *m_program;
 	address_space *m_io;
 	uint32_t m_a20_mask;
-	memory_access<32, 1, 0, ENDIANNESS_LITTLE>::cache macache16;
-	memory_access<32, 2, 0, ENDIANNESS_LITTLE>::cache macache32;
+	memory_access<32, 1, 0, ENDIANNESS_LITTLE>::specific macache16;
+	memory_access<32, 2, 0, ENDIANNESS_LITTLE>::specific macache32;
 
 	int m_cpuid_max_input_value_eax; // Highest CPUID standard function available
 	uint32_t m_cpuid_id0, m_cpuid_id1, m_cpuid_id2;

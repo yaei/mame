@@ -140,7 +140,7 @@ private:
 	const address_space_config m_program_config;
 	const address_space_config m_data_config;
 	const u16 m_rom_size;
-	memory_access<16, 1, -1, ENDIANNESS_LITTLE>::cache m_cache;
+	memory_access<16, 1, -1, ENDIANNESS_LITTLE>::specific m_cache;
 	memory_access<16, 1, -1, ENDIANNESS_LITTLE>::specific m_program;
 	memory_access<12, 0,  0, ENDIANNESS_LITTLE>::specific m_data;
 

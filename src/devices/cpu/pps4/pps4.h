@@ -79,7 +79,7 @@ protected:
 	devcb_read8 m_dib_cb;
 	devcb_write8 m_do_cb;
 
-	memory_access<12, 0, 0, ENDIANNESS_LITTLE>::cache m_cache;
+	memory_access<12, 0, 0, ENDIANNESS_LITTLE>::specific m_cache;
 	memory_access<12, 0, 0, ENDIANNESS_LITTLE>::specific m_program;
 	memory_access<12, 0, 0, ENDIANNESS_LITTLE>::specific m_data;
 	memory_access< 8, 0, 0, ENDIANNESS_LITTLE>::specific m_io;

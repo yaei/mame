@@ -114,7 +114,7 @@ protected:
 	required_shared_ptr<uint16_t> m_b2;
 	optional_shared_ptr<uint16_t> m_b3;
 
-	memory_access<16, 1, -1, ENDIANNESS_BIG>::cache m_cache;
+	memory_access<16, 1, -1, ENDIANNESS_BIG>::specific m_cache;
 	memory_access<16, 1, -1, ENDIANNESS_BIG>::specific m_program;
 	memory_access<16, 1, -1, ENDIANNESS_BIG>::specific m_data;
 	memory_access<16, 1, -1, ENDIANNESS_BIG>::specific m_io;

@@ -887,7 +887,7 @@ enum
 
 void pic16c5x_device::device_start()
 {
-	space(AS_PROGRAM).cache(m_program);
+	space(AS_PROGRAM).specific(m_program);
 	space(AS_DATA).specific(m_data);
 
 	m_read_a.resolve_safe(0);

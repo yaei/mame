@@ -138,7 +138,7 @@ protected:
 	int         m_icount;
 	int         m_bankswitch_icount;
 	devcb_write_line m_cpu_interrupt;
-	memory_access<24, 2, 0, ENDIANNESS_BIG>::cache m_cache;
+	memory_access<24, 2, 0, ENDIANNESS_BIG>::specific m_cache;
 	memory_access<24, 2, 0, ENDIANNESS_BIG>::specific m_program;
 	memory_access< 8, 2, 0, ENDIANNESS_BIG>::specific m_io;
 

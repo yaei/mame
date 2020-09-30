@@ -94,7 +94,7 @@ std::unique_ptr<util::disasm_interface> saturn_device::create_disassembler()
 
 void saturn_device::device_start()
 {
-	space(AS_PROGRAM).cache(m_cache);
+	space(AS_PROGRAM).specific(m_cache);
 	space(AS_PROGRAM).specific(m_program);
 
 	m_out_func.resolve_safe();

@@ -191,7 +191,7 @@ struct dsp56156_core
 	int             interrupt_cycles;
 	void            (*output_pins_changed)(uint32_t pins);
 	cpu_device *device;
-	memory_access<16, 1, -1, ENDIANNESS_LITTLE>::cache cache;
+	memory_access<16, 1, -1, ENDIANNESS_LITTLE>::specific cache;
 	memory_access<16, 1, -1, ENDIANNESS_LITTLE>::specific program;
 	memory_access<16, 1, -1, ENDIANNESS_LITTLE>::specific data;
 

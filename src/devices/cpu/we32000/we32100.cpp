@@ -37,7 +37,7 @@ device_memory_interface::space_config_vector we32100_device::memory_space_config
 
 void we32100_device::device_start()
 {
-	space(AS_PROGRAM).cache(m_cache);
+	space(AS_PROGRAM).specific(m_cache);
 	space(AS_PROGRAM).specific(m_space);
 
 	set_icountptr(m_icount);

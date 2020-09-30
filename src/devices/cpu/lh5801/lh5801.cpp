@@ -90,7 +90,7 @@ device_memory_interface::space_config_vector lh5801_cpu_device::memory_space_con
 
 void lh5801_cpu_device::device_start()
 {
-	space(AS_PROGRAM).cache(m_cache);
+	space(AS_PROGRAM).specific(m_cache);
 	space(AS_PROGRAM).specific(m_program);
 	space(AS_IO).specific(m_io);
 

@@ -470,10 +470,10 @@ void i8086_common_cpu_device::device_start()
 	m_opcodes = has_space(AS_OPCODES) ? &space(AS_OPCODES) : m_program;
 
 	if(m_opcodes->data_width() == 8) {
-		m_opcodes->cache(m_cache8);
+		m_opcodes->specific(m_cache8);
 		m_or8 = [this](offs_t address) -> u8 { return m_cache8.read_byte(address); };
 	} else {
-		m_opcodes->cache(m_cache16);
+		m_opcodes->specific(m_cache16);
 		m_or8 = [this](offs_t address) -> u8 { return m_cache16.read_byte(address); };
 	}
 	m_io = &space(AS_IO);

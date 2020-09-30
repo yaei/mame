@@ -344,10 +344,10 @@ m6805_base_device::m6805_base_device(
 void m6805_base_device::device_start()
 {
 	if (m_params.m_addr_width > 13) {
-		space(AS_PROGRAM).cache(m_cprogram16);
+		space(AS_PROGRAM).specific(m_cprogram16);
 		space(AS_PROGRAM).specific(m_program16);
 	} else {
-		space(AS_PROGRAM).cache(m_cprogram13);
+		space(AS_PROGRAM).specific(m_cprogram13);
 		space(AS_PROGRAM).specific(m_program13);
 	}
 

@@ -126,7 +126,7 @@ private:
 	sound_stream *m_stream;
 
 	// internal state
-	memory_access<24, 0, 0, ENDIANNESS_LITTLE>::cache m_cache;
+	memory_access<24, 0, 0, ENDIANNESS_LITTLE>::specific m_cache;
 	required_region_ptr<u8> m_rom;
 	devcb_write_line m_irq_cb;
 

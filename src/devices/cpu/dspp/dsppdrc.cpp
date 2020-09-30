@@ -292,7 +292,7 @@ void dspp_device::generate_checksum_block(drcuml_block &block, compiler_state *c
 		{
 			uint32_t sum = seqhead->opptr.w[0];
 			uint32_t addr = seqhead->physpc;
-			const void *base = m_code_cache.read_ptr(addr);
+			const void *base = space(AS_PROGRAM).get_read_ptr(addr);
 			UML_MOV(block, I0, 0);
 			UML_LOAD(block, I0, base, 0, SIZE_WORD, SCALE_x2);         // load    i0,base,0,word
 
@@ -306,14 +306,14 @@ void dspp_device::generate_checksum_block(drcuml_block &block, compiler_state *c
 	{
 		uint32_t sum = 0;
 		uint32_t addr = seqhead->physpc;
-		const void *base = m_code_cache.read_ptr(addr);
+		const void *base = space(AS_PROGRAM).get_read_ptr(addr);
 		UML_LOAD(block, I0, base, 0, SIZE_WORD, SCALE_x2);              // load    i0,base,0,dword
 		sum += seqhead->opptr.w[0];
 		for (curdesc = seqhead->next(); curdesc != seqlast->next(); curdesc = curdesc->next())
 			if (!(curdesc->flags & OPFLAG_VIRTUAL_NOOP))
 			{
 				addr = curdesc->physpc;
-				base = m_code_cache.read_ptr(addr);
+				base = space(AS_PROGRAM).get_read_ptr(addr);
 				assert(base != nullptr);
 				UML_LOAD(block, I1, base, 0, SIZE_WORD, SCALE_x2);      // load    i1,base,dword
 				UML_ADD(block, I0, I0, I1);                             // add     i0,i0,i1

@@ -39,7 +39,7 @@ protected:
 private:
 	const char *m_rom_tag;
 	address_space_config m_rom_config;
-	typename memory_access<AddrWidth, DataWidth, AddrShift, Endian>::cache m_rom_cache;
+	typename memory_access<AddrWidth, DataWidth, AddrShift, Endian>::specific m_rom_cache;
 
 	memory_bank *m_bank;
 	int m_cur_bank, m_bank_count;

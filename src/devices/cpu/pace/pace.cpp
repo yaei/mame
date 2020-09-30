@@ -130,7 +130,7 @@ void pace_device::device_resolve_objects()
 void pace_device::device_start()
 {
 	// get memory spaces
-	space(AS_PROGRAM).cache(m_cache);
+	space(AS_PROGRAM).specific(m_cache);
 	space(AS_PROGRAM).specific(m_space);
 
 	set_icountptr(m_icount);

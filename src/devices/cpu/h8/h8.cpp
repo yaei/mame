@@ -38,7 +38,7 @@ void h8_device::device_config_complete()
 
 void h8_device::device_start()
 {
-	space(AS_PROGRAM).cache(cache);
+	space(AS_PROGRAM).specific(cache);
 	space(AS_PROGRAM).specific(program);
 	space(AS_IO).specific(io);
 

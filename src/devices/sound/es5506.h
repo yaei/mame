@@ -201,7 +201,7 @@ private:
 	inline u32 reg_read_high(es550x_voice *voice, offs_t offset);
 	inline u32 reg_read_test(es550x_voice *voice, offs_t offset);
 
-	memory_access<21, 1, -1, ENDIANNESS_BIG>::cache m_cache[4];
+	memory_access<21, 1, -1, ENDIANNESS_BIG>::specific m_cache[4];
 
 	// ES5506 specific registers
 	u32      m_write_latch;            // currently accumulated data for write
@@ -256,7 +256,7 @@ private:
 	inline u16 reg_read_high(es550x_voice *voice, offs_t offset);
 	inline u16 reg_read_test(es550x_voice *voice, offs_t offset);
 
-	memory_access<20, 1, -1, ENDIANNESS_BIG>::cache m_cache[2];
+	memory_access<20, 1, -1, ENDIANNESS_BIG>::specific m_cache[2];
 };
 
 DECLARE_DEVICE_TYPE(ES5505, es5505_device)

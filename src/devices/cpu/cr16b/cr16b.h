@@ -42,7 +42,7 @@ protected:
 private:
 	// address space
 	address_space_config m_space_config;
-	memory_access<21, 1, 0, ENDIANNESS_LITTLE>::cache m_cache;
+	memory_access<21, 1, 0, ENDIANNESS_LITTLE>::specific m_cache;
 	memory_access<21, 1, 0, ENDIANNESS_LITTLE>::specific m_space;
 
 	// internal state

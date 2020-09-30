@@ -23,7 +23,7 @@ ks0164_cpu_device::ks0164_cpu_device(const machine_config &mconfig, const char *
 
 void ks0164_cpu_device::device_start()
 {
-	space(AS_PROGRAM).cache(m_program_cache);
+	space(AS_PROGRAM).specific(m_program_cache);
 	space(AS_PROGRAM).specific(m_program);
 
 	state_add(STATE_GENPC,     "GENPC",     m_r[R_PC]).callexport().noshow();

@@ -47,7 +47,7 @@ ie15_cpu_device::ie15_cpu_device(const machine_config &mconfig, const char *tag,
 void ie15_cpu_device::device_start()
 {
 	// find address spaces
-	space(AS_PROGRAM).cache(m_cache);
+	space(AS_PROGRAM).specific(m_cache);
 	space(AS_PROGRAM).specific(m_program);
 	space(AS_IO).specific(m_io);
 

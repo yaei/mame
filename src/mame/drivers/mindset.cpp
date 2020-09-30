@@ -330,7 +330,7 @@ protected:
 	required_device<dac_byte_interface> m_dac;
 	required_device_array<mindset_module, 6> m_modules;
 
-	memory_access<20, 1, 0, ENDIANNESS_LITTLE>::cache m_gcps;
+	memory_access<20, 1, 0, ENDIANNESS_LITTLE>::specific m_gcps;
 
 	floppy_image_device *m_floppy[2];
 	u32 m_palette[16];
@@ -450,7 +450,7 @@ void mindset_state::machine_start()
 	m_yellow_led.resolve();
 	m_green_led.resolve();
 
-	m_maincpu->space(AS_PROGRAM).cache(m_gcps);
+	m_maincpu->space(AS_PROGRAM).specific(m_gcps);
 	for(int i=0; i<2; i++)
 		m_floppy[i] = m_fdco[i]->get_device();
 

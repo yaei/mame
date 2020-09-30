@@ -300,8 +300,8 @@ protected:
 	int     m_icount;
 
 	// address spaces
-	memory_access<16, 0, 0, ENDIANNESS_BIG>::cache m_cprogram16;
-	memory_access<13, 0, 0, ENDIANNESS_BIG>::cache m_cprogram13;
+	memory_access<16, 0, 0, ENDIANNESS_BIG>::specific m_cprogram16;
+	memory_access<13, 0, 0, ENDIANNESS_BIG>::specific m_cprogram13;
 	memory_access<16, 0, 0, ENDIANNESS_BIG>::specific m_program16;
 	memory_access<13, 0, 0, ENDIANNESS_BIG>::specific m_program13;
 };

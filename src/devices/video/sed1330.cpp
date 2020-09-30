@@ -174,7 +174,7 @@ const tiny_rom_entry *sed1330_device::device_rom_region() const
 
 void sed1330_device::device_start()
 {
-	space().cache(m_cache);
+	space().specific(m_cache);
 
 	// register for state saving
 	save_item(NAME(m_bf));

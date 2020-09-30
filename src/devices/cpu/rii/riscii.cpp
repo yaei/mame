@@ -196,7 +196,7 @@ void riscii_series_device::device_resolve_objects()
 
 void riscii_series_device::device_start()
 {
-	space(AS_PROGRAM).cache(m_cache);
+	space(AS_PROGRAM).specific(m_cache);
 	space(AS_PROGRAM).specific(m_program);
 	space(AS_DATA).specific(m_regs);
 

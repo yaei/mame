@@ -50,7 +50,7 @@ protected:
 	virtual void state_string_export(const device_state_entry &entry, std::string &str) const override;
 
 	const address_space_config m_program_config;
-	memory_access<16, 1, 0, ENDIANNESS_BIG>::cache m_program_cache;
+	memory_access<16, 1, 0, ENDIANNESS_BIG>::specific m_program_cache;
 	memory_access<16, 1, 0, ENDIANNESS_BIG>::specific m_program;
 
 	void handle_irq();

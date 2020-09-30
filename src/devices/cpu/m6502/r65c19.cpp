@@ -108,7 +108,7 @@ device_memory_interface::space_config_vector c39_device::memory_space_config() c
 void c39_device::device_start()
 {
 	std::unique_ptr<mi_banked> intf = std::make_unique<mi_banked>();
-	space(AS_DATA).cache(intf->escache);
+	space(AS_DATA).specific(intf->escache);
 	space(AS_DATA).specific(intf->exp);
 	space(AS_IO).specific(intf->es4);
 

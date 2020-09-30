@@ -117,7 +117,7 @@ private:
 	uint8_t m_irq_line;
 	uint8_t m_irq_state;
 	uint8_t m_nmi_line;
-	memory_access<32, 2, 0, ENDIANNESS_LITTLE>::cache m_cache;
+	memory_access<32, 2, 0, ENDIANNESS_LITTLE>::specific m_cache;
 	memory_access<32, 2, 0, ENDIANNESS_LITTLE>::specific m_program;
 	memory_access<32, 2, 0, ENDIANNESS_LITTLE>::specific m_io;
 	uint32_t m_PPC;

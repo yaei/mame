@@ -871,8 +871,8 @@ void g65816_device::device_start()
 	m_execute = nullptr;
 	m_debugger_temp = 0;
 
-	space(AS_PROGRAM).cache(m_program);
-	(has_space(AS_OPCODES) ? space(AS_OPCODES) : space(AS_PROGRAM)).cache(m_opcode);
+	space(AS_PROGRAM).specific(m_program);
+	(has_space(AS_OPCODES) ? space(AS_OPCODES) : space(AS_PROGRAM)).specific(m_opcode);
 	(has_space(AS_DATA) ? space(AS_DATA) : space(AS_PROGRAM)).specific(m_data);
 
 	m_wdm_w.resolve_safe();

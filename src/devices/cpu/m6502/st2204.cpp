@@ -79,7 +79,7 @@ void st2204_device::device_start()
 {
 	std::unique_ptr<mi_st2204> intf = std::make_unique<mi_st2204>();
 
-	space(AS_DATA).cache(intf->dcache);
+	space(AS_DATA).specific(intf->dcache);
 	space(AS_DATA).specific(intf->data);
 	intf->irr_enable = false;
 	intf->irr = 0;

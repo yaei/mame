@@ -1651,7 +1651,7 @@ const tms32025_device::tms32025_opcode tms32025_device::s_opcode_Dx_subset[8]=  
  ****************************************************************************/
 void tms32025_device::device_start()
 {
-	space(AS_PROGRAM).cache(m_cache);
+	space(AS_PROGRAM).specific(m_cache);
 	space(AS_PROGRAM).specific(m_program);
 	space(AS_DATA).specific(m_data);
 	space(AS_IO).specific(m_io);

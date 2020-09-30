@@ -213,7 +213,7 @@ protected:
 	int           m_icount;
 
 	/* Memory spaces */
-	memory_access<12, 0, 0, ENDIANNESS_LITTLE>::cache m_program;
+	memory_access<12, 0, 0, ENDIANNESS_LITTLE>::specific m_program;
 	memory_access<8, 0, 0, ENDIANNESS_LITTLE>::specific m_data;
 	memory_access<8, 0, 0, ENDIANNESS_LITTLE>::specific m_io;
 

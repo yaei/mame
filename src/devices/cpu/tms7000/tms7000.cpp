@@ -196,7 +196,7 @@ device_memory_interface::space_config_vector tms7000_device::memory_space_config
 void tms7000_device::device_start()
 {
 	// init/zerofill
-	space(AS_PROGRAM).cache(m_cache);
+	space(AS_PROGRAM).specific(m_cache);
 	space(AS_PROGRAM).specific(m_program);
 
 	set_icountptr(m_icount);

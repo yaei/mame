@@ -107,7 +107,7 @@ private:
 	void op_iform1b();
 
 	address_space_config m_program_config;
-	memory_access<32, 2, 0, ENDIANNESS_LITTLE>::cache m_cache;
+	memory_access<32, 2, 0, ENDIANNESS_LITTLE>::specific m_cache;
 	memory_access<32, 2, 0, ENDIANNESS_LITTLE>::specific m_program;
 
 	// internal state

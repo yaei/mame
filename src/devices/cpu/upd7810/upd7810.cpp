@@ -1564,7 +1564,7 @@ void upd78c05_device::handle_timers(int cycles)
 void upd7810_device::base_device_start()
 {
 	space(AS_PROGRAM).specific(m_program);
-	space(AS_PROGRAM).cache(m_opcodes);
+	space(AS_PROGRAM).specific(m_opcodes);
 
 	m_to_func.resolve_safe();
 	m_co0_func.resolve_safe();

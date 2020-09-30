@@ -1002,7 +1002,7 @@ void pic17_cpu_device::execute_run()
 void pic17_cpu_device::device_start()
 {
 	// Hook address spaces
-	space(AS_PROGRAM).cache(m_cache);
+	space(AS_PROGRAM).specific(m_cache);
 	space(AS_PROGRAM).specific(m_program);
 	space(AS_DATA).specific(m_data);
 	set_icountptr(m_icount);

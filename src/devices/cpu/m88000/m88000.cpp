@@ -43,7 +43,7 @@ device_memory_interface::space_config_vector mc88100_device::memory_space_config
 
 void mc88100_device::device_start()
 {
-	space(AS_PROGRAM).cache(m_inst_cache);
+	space(AS_PROGRAM).specific(m_inst_cache);
 	space(AS_DATA).specific(m_data_space);
 
 	set_icountptr(m_icount);

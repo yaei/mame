@@ -2155,7 +2155,7 @@ uint8_t mcs51_cpu_device::sfr_read(size_t offset)
 
 void mcs51_cpu_device::device_start()
 {
-	space(AS_PROGRAM).cache(m_program);
+	space(AS_PROGRAM).specific(m_program);
 	space(AS_DATA).specific(m_data);
 	space(AS_IO).specific(m_io);
 

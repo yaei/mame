@@ -165,7 +165,7 @@ private:
 	u8              m_acia_rxc_txc_state;
 	emu_timer       *m_acia_rxc_txc_timer;
 
-	memory_access<16, 0, 0, ENDIANNESS_LITTLE>::cache m_mem_cache;
+	memory_access<16, 0, 0, ENDIANNESS_LITTLE>::specific m_mem_cache;
 };
 
 

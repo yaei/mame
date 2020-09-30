@@ -75,8 +75,8 @@ device_memory_interface::space_config_vector rx01_cpu_device::memory_space_confi
 
 void rx01_cpu_device::device_start()
 {
-	space(AS_PROGRAM).cache(m_inst_cache);
-	space(AS_DATA).cache(m_data_cache);
+	space(AS_PROGRAM).specific(m_inst_cache);
+	space(AS_DATA).specific(m_data_cache);
 
 	set_icountptr(m_icount);
 

@@ -160,7 +160,7 @@ protected:
 		int32_t treg2;
 	} m_shadow;
 
-	memory_access<16, 1, -1, ENDIANNESS_LITTLE>::cache m_cache;
+	memory_access<16, 1, -1, ENDIANNESS_LITTLE>::specific m_cache;
 	memory_access<16, 1, -1, ENDIANNESS_LITTLE>::specific m_program;
 	memory_access<16, 1, -1, ENDIANNESS_LITTLE>::specific m_data;
 	memory_access<16, 1, -1, ENDIANNESS_LITTLE>::specific m_io;

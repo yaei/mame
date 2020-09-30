@@ -60,8 +60,8 @@ void namco_c117_device::device_start()
 
 	space(AS_PROGRAM).specific(m_program);
 
-	m_cpuexec[0]->space(AS_PROGRAM).cache(m_cpucache[0]);
-	m_cpuexec[1]->space(AS_PROGRAM).cache(m_cpucache[1]);
+	m_cpuexec[0]->space(AS_PROGRAM).specific(m_cpucache[0]);
+	m_cpuexec[1]->space(AS_PROGRAM).specific(m_cpucache[1]);
 
 	memset(&m_offsets, 0, sizeof(m_offsets));
 	m_subres = m_wdog = 0;

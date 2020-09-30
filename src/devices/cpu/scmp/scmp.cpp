@@ -502,7 +502,7 @@ void scmp_device::device_start()
 		state_add(SCMP_SR,     "SR",    m_SR);
 	}
 
-	space(AS_PROGRAM).cache(m_cache);
+	space(AS_PROGRAM).specific(m_cache);
 	space(AS_PROGRAM).specific(m_program);
 
 	/* resolve callbacks */

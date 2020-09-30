@@ -111,7 +111,7 @@ private:
 	struct { int t2ms, t512ms; int count; } m_timer;
 	emu_timer *m_2ms_tick_timer;
 
-	memory_access<16, 0, 0, ENDIANNESS_BIG>::cache m_cache;
+	memory_access<16, 0, 0, ENDIANNESS_BIG>::specific m_cache;
 	memory_access<16, 0, 0, ENDIANNESS_BIG>::specific m_program;
 
 	int m_icount;

@@ -182,7 +182,7 @@ private:
 
 	// address space and cache
 	address_space_config m_space_config;
-	memory_access<16, 1, -1, ENDIANNESS_LITTLE>::cache m_cache;
+	memory_access<16, 1, -1, ENDIANNESS_LITTLE>::specific m_cache;
 	memory_access<16, 1, -1, ENDIANNESS_LITTLE>::specific m_space;
 
 	// callback objects

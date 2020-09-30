@@ -194,7 +194,7 @@ lc8670_cpu_device::lc8670_cpu_device(const machine_config &mconfig, const char *
 void lc8670_cpu_device::device_start()
 {
 	// find address spaces
-	space(AS_PROGRAM).cache(m_cache);
+	space(AS_PROGRAM).specific(m_cache);
 	space(AS_PROGRAM).specific(m_program);
 	space(AS_DATA).specific(m_data);
 	space(AS_IO).specific(m_io);

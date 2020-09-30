@@ -192,7 +192,7 @@ void esrip_device::device_start()
 	/* Allocate image pointer table RAM */
 	m_ipt_ram.resize(IPT_RAM_SIZE/2);
 
-	space(AS_PROGRAM).cache(m_cache);
+	space(AS_PROGRAM).specific(m_cache);
 	space(AS_PROGRAM).specific(m_program);
 
 	// register our state for the debugger

@@ -78,7 +78,7 @@ score7_cpu_device::score7_cpu_device(const machine_config &mconfig, const char *
 void score7_cpu_device::device_start()
 {
 	// find address spaces
-	space(AS_PROGRAM).cache(m_cache);
+	space(AS_PROGRAM).specific(m_cache);
 	space(AS_PROGRAM).specific(m_program);
 
 	// set our instruction counter

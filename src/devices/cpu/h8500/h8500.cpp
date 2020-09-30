@@ -66,7 +66,7 @@ void h8500_device::device_start()
 {
 	m_program = &space(AS_PROGRAM);
 	if (has_space(AS_DATA))
-		space(AS_DATA).cache(m_ram_cache);
+		space(AS_DATA).specific(m_ram_cache);
 
 	set_icountptr(m_icount);
 

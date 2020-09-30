@@ -291,7 +291,7 @@ void dsp56156_device::device_start()
 
 	save_item(NAME(m_core.peripheral_ram));
 
-	space(AS_PROGRAM).cache(m_core.cache);
+	space(AS_PROGRAM).specific(m_core.cache);
 	space(AS_PROGRAM).specific(m_core.program);
 	space(AS_DATA).specific(m_core.data);
 

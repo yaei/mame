@@ -62,7 +62,7 @@ private:
 	uint32_t m_ER;
 	uint32_t m_PPC;
 
-	memory_access<32, 2, 0, ENDIANNESS_LITTLE>::cache m_cache;
+	memory_access<32, 2, 0, ENDIANNESS_LITTLE>::specific m_cache;
 	memory_access<32, 2, 0, ENDIANNESS_LITTLE>::specific m_program;
 	uint8_t m_IRQ;
 	uint8_t m_NMI;

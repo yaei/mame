@@ -87,7 +87,7 @@ void s_smp_device::device_start()
 	m_dsp_io_w_cb.resolve_safe();
 
 	space(AS_DATA).specific(m_data);
-	space(AS_DATA).cache(m_dcache);
+	space(AS_DATA).specific(m_dcache);
 
 	m_tick_timer = timer_alloc(TIMER_TICK_ID);
 

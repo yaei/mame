@@ -146,7 +146,7 @@ private:
 	// address spaces
 	const address_space_config m_inst_config;
 	const address_space_config m_data_config;
-	memory_access<16, 1, -1, ENDIANNESS_LITTLE>::cache m_inst_cache;
+	memory_access<16, 1, -1, ENDIANNESS_LITTLE>::specific m_inst_cache;
 	memory_access<16, 1, -1, ENDIANNESS_LITTLE>::specific m_inst_space;
 	memory_access<16, 0,  0, ENDIANNESS_LITTLE>::specific m_data_space;
 

@@ -182,7 +182,7 @@ void cquestsnd_cpu_device::device_start()
 	assert(m_sound_region_tag != nullptr);
 	m_sound_data = (u16*)machine().root_device().memregion(m_sound_region_tag)->base();
 
-	space(AS_PROGRAM).cache(m_cache);
+	space(AS_PROGRAM).specific(m_cache);
 	space(AS_PROGRAM).specific(m_program);
 
 	memset(m_ram, 0, sizeof(m_ram));
@@ -261,7 +261,7 @@ void cquestrot_cpu_device::device_start()
 {
 	m_linedata_w.resolve_safe();
 
-	space(AS_PROGRAM).cache(m_cache);
+	space(AS_PROGRAM).specific(m_cache);
 	space(AS_PROGRAM).specific(m_program);
 
 	memset(m_ram, 0, sizeof(m_ram));
@@ -392,7 +392,7 @@ void cquestlin_cpu_device::device_start()
 {
 	m_linedata_r.resolve_safe(0);
 
-	space(AS_PROGRAM).cache(m_cache);
+	space(AS_PROGRAM).specific(m_cache);
 	space(AS_PROGRAM).specific(m_program);
 
 	memset(m_ram, 0, sizeof(m_ram));

@@ -87,7 +87,7 @@ private:
 	// emulation state
 	int m_icount;
 
-	memory_access<24, 1, 0, ENDIANNESS_LITTLE>::cache m_bus[16];
+	memory_access<24, 1, 0, ENDIANNESS_LITTLE>::specific m_bus[16];
 
 	u32 m_pc;      // program counter
 	u32 m_sb;      // static base

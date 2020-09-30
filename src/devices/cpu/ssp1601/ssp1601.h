@@ -71,7 +71,7 @@ private:
 
 	int m_g_cycles;
 
-	memory_access<16, 1, -1, ENDIANNESS_BIG>::cache m_cache;
+	memory_access<16, 1, -1, ENDIANNESS_BIG>::specific m_cache;
 	memory_access<16, 1, -1, ENDIANNESS_BIG>::specific m_program;
 	memory_access< 4, 1,  0, ENDIANNESS_BIG>::specific m_io;
 

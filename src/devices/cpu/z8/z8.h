@@ -74,7 +74,7 @@ private:
 	address_space_config m_data_config;
 	address_space_config m_register_config;
 
-	memory_access<16, 0, 0, ENDIANNESS_BIG>::cache m_cache;
+	memory_access<16, 0, 0, ENDIANNESS_BIG>::specific m_cache;
 	memory_access<16, 0, 0, ENDIANNESS_BIG>::specific m_program;
 	memory_access<16, 0, 0, ENDIANNESS_BIG>::specific m_data;
 	memory_access< 8, 0, 0, ENDIANNESS_BIG>::specific m_regs;

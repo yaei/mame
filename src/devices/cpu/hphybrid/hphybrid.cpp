@@ -219,7 +219,7 @@ void hp_hybrid_cpu_device::device_start()
 		state_add(HPHYBRID_I,      "I",        m_reg_I).noshow();
 	}
 
-	space(AS_PROGRAM).cache(m_cache);
+	space(AS_PROGRAM).specific(m_cache);
 	space(AS_PROGRAM).specific(m_program);
 	space(AS_IO).specific(m_io);
 

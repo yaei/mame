@@ -104,7 +104,7 @@ diablo1300_cpu_device::diablo1300_cpu_device(const machine_config &mconfig, cons
 
 void diablo1300_cpu_device::device_start()
 {
-	space(AS_PROGRAM).cache(m_cache);
+	space(AS_PROGRAM).specific(m_cache);
 	space(AS_PROGRAM).specific(m_program);
 	space(AS_DATA).specific(m_data);
 	m_table   = memregion("trom");

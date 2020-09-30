@@ -141,7 +141,7 @@ private:
 	int m_ad_channel;
 
 	uint8_t m_irq_state[2];
-	memory_access<16, 0, 0, ENDIANNESS_BIG>::cache m_cache;
+	memory_access<16, 0, 0, ENDIANNESS_BIG>::specific m_cache;
 	memory_access<16, 0, 0, ENDIANNESS_BIG>::specific m_program;
 	memory_access<11, 0, 0, ENDIANNESS_BIG>::specific m_data;
 	memory_access< 8, 0, 0, ENDIANNESS_BIG>::specific m_io;

@@ -48,7 +48,7 @@ private:
 	static constexpr unsigned KDAC_A_PCM_MAX = 2;      /* Channels per chip */
 
 	// internal state
-	memory_access<17, 0, 0, ENDIANNESS_LITTLE>::cache m_cache;
+	memory_access<17, 0, 0, ENDIANNESS_LITTLE>::specific m_cache;
 	optional_region_ptr<u8> m_rom;
 
 	struct channel_t

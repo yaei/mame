@@ -355,7 +355,7 @@ void jaguar_cpu_device::device_start()
 {
 	init_tables();
 
-	space(AS_PROGRAM).cache(m_cache);
+	space(AS_PROGRAM).specific(m_cache);
 	space(AS_PROGRAM).specific(m_program);
 	space(AS_IO).specific(m_io);
 	m_cpu_interrupt.resolve_safe();

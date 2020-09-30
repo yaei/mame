@@ -320,7 +320,7 @@ void h6280_device::device_reset()
 #endif
 	m_io_buffer = 0;
 
-	space(AS_PROGRAM).cache(m_cache);
+	space(AS_PROGRAM).specific(m_cache);
 	space(AS_PROGRAM).specific(m_program);
 	space(AS_IO).specific(m_io);
 

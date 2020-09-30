@@ -429,7 +429,7 @@ protected:
 	adsp_core           m_alt;
 
 	// address spaces
-	memory_access<14, 2, -2, ENDIANNESS_LITTLE>::cache m_cache;
+	memory_access<14, 2, -2, ENDIANNESS_LITTLE>::specific m_cache;
 	memory_access<14, 2, -2, ENDIANNESS_LITTLE>::specific m_program;
 	memory_access<14, 1, -1, ENDIANNESS_LITTLE>::specific m_data;
 	memory_access<11, 1, -1, ENDIANNESS_LITTLE>::specific m_io;

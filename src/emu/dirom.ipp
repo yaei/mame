@@ -91,7 +91,7 @@ void device_rom_interface<AddrWidth, DataWidth, AddrShift, Endian>::interface_pr
 	if(!has_space(0))
 		return;
 
-	space().cache(m_rom_cache);
+	space().specific(m_rom_cache);
 
 	device().save_item(NAME(m_cur_bank));
 	device().save_item(NAME(m_bank_count));

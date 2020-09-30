@@ -80,7 +80,7 @@ void hp_nanoprocessor_device::device_start()
 	state_add(NANO_REG_ISR, "ISR", m_reg_ISR).formatstr("%03X");
 	state_add(STATE_GENFLAGS, "GENFLAGS", m_flags).noshow().formatstr("%10s");
 
-	space(AS_PROGRAM).cache(m_cache);
+	space(AS_PROGRAM).specific(m_cache);
 	space(AS_PROGRAM).specific(m_program);
 	space(AS_IO).specific(m_io);
 

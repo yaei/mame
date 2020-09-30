@@ -237,8 +237,8 @@ protected:
 	const address_space_config m_program_config;
 	const address_space_config m_opcodes_config;
 	const address_space_config m_io_config;
-	memory_access<16, 0, 0, ENDIANNESS_LITTLE>::cache m_args;
-	memory_access<16, 0, 0, ENDIANNESS_LITTLE>::cache m_opcodes;
+	memory_access<16, 0, 0, ENDIANNESS_LITTLE>::specific m_args;
+	memory_access<16, 0, 0, ENDIANNESS_LITTLE>::specific m_opcodes;
 	memory_access<16, 0, 0, ENDIANNESS_LITTLE>::specific m_data;
 	memory_access<16, 0, 0, ENDIANNESS_LITTLE>::specific m_io;
 

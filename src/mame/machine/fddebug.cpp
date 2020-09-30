@@ -443,7 +443,7 @@ static inline int pc_is_valid(address_space &space, uint32_t pc, uint32_t flags)
 		return 0;
 	if (pc & 0xff000000)
 		return 0;
-	if (space.direct().read_ptr(pc) == nullptr)
+	if (space->get_read_ptr(pc) == nullptr)
 		return 0;
 	return 1;
 }

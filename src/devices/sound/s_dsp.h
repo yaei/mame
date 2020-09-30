@@ -38,7 +38,7 @@ protected:
 	address_space_config m_data_config;
 
 private:
-	memory_access<16, 0, 0, ENDIANNESS_LITTLE>::cache m_cache;
+	memory_access<16, 0, 0, ENDIANNESS_LITTLE>::specific m_cache;
 	memory_access<16, 0, 0, ENDIANNESS_LITTLE>::specific m_data;
 	inline u8 read_byte(offs_t a) { return m_cache.read_byte(a); }
 	inline u16 read_word(offs_t a) { return read_byte(a) | (read_byte(a + 1) << 8); }

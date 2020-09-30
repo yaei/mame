@@ -113,7 +113,7 @@ protected:
 	const uint32_t m_info_flags;
 	unsigned m_divider;
 
-	memory_access<16, 0, 0, ENDIANNESS_BIG>::cache m_cache;
+	memory_access<16, 0, 0, ENDIANNESS_BIG>::specific m_cache;
 	memory_access<16, 0, 0, ENDIANNESS_BIG>::specific m_program;
 	int m_icount;
 

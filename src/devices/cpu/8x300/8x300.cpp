@@ -153,7 +153,7 @@ void n8x300_cpu_device::device_resolve_objects()
 
 void n8x300_cpu_device::device_start()
 {
-	space(AS_PROGRAM).cache(m_cache);
+	space(AS_PROGRAM).specific(m_cache);
 	space(AS_PROGRAM).specific(m_program);
 	space(AS_IO).specific(m_io);
 

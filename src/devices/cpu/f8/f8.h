@@ -66,8 +66,8 @@ private:
 	u8   m_dbus;   /* data bus value */
 	u16  m_io;     /* last I/O address */
 	u16  m_irq_vector;
-	memory_access<16, 0, 0, ENDIANNESS_BIG>::cache m_program;
-	memory_access<6, 0, 0, ENDIANNESS_BIG>::cache m_r;
+	memory_access<16, 0, 0, ENDIANNESS_BIG>::specific m_program;
+	memory_access<6, 0, 0, ENDIANNESS_BIG>::specific m_r;
 	memory_access<8, 0, 0, ENDIANNESS_BIG>::specific m_ios;
 	int m_icount;
 	int m_irq_request;

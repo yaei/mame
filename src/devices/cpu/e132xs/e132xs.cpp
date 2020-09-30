@@ -1117,24 +1117,24 @@ void hyperstone_device::init(int scale_mask)
 	m_program = &space(AS_PROGRAM);
 	if (m_program->data_width() == 16)
 	{
-		m_program->cache(m_cache16);
+		m_program->specific(m_cache16);
 		m_pr16 = [this](offs_t address) -> u16 { return m_cache16.read_word(address); };
-		m_prptr = [this](offs_t address) -> const void * { return m_cache16.read_ptr(address); };
+		m_prptr = [this](offs_t address) -> const void * { return m_program->get_read_ptr(address); };
 	}
 	else
 	{
-		m_program->cache(m_cache32);
+		m_program->specific(m_cache32);
 		m_pr16 = [this](offs_t address) -> u16 { return m_cache32.read_word(address); };
 		if (ENDIANNESS_NATIVE != ENDIANNESS_BIG)
 			m_prptr = [this](offs_t address) -> const void * {
-				const u16 *ptr = static_cast<u16 *>(m_cache32.read_ptr(address & ~3));
+				const u16 *ptr = static_cast<u16 *>(m_program->get_read_ptr(address & ~3));
 				if(!(address & 2))
 					ptr++;
 				return ptr;
 			};
 		else
 			m_prptr = [this](offs_t address) -> const void * {
-				const u16 *ptr = static_cast<u16 *>(m_cache32.read_ptr(address & ~3));
+				const u16 *ptr = static_cast<u16 *>(m_program->get_read_ptr(address & ~3));
 				if(address & 2)
 					ptr++;
 				return ptr;

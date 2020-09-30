@@ -118,8 +118,8 @@ private:
 	address_space_config m_data_config;
 	address_space_config m_io_config;
 	memory_access<24, 1, 0, ENDIANNESS_BIG>::specific m_program;
-	memory_access<24, 1, 0, ENDIANNESS_BIG>::cache m_cache;
-	memory_access<10, 2, 0, ENDIANNESS_BIG>::cache m_data;
+	memory_access<24, 1, 0, ENDIANNESS_BIG>::specific m_cache;
+	memory_access<10, 2, 0, ENDIANNESS_BIG>::specific m_data;
 	memory_access<9, 2, 0, ENDIANNESS_BIG>::specific m_io;
 
 	u32 m_pc;

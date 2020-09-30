@@ -100,7 +100,7 @@ protected:
 
 	int                 m_icount;
 
-	memory_access<15, 0,  0, ENDIANNESS_BIG>::cache m_cache;
+	memory_access<15, 0,  0, ENDIANNESS_BIG>::specific m_cache;
 	memory_access<15, 0,  0, ENDIANNESS_BIG>::specific m_program;
 	memory_access<32, 1, -1, ENDIANNESS_BIG>::specific m_data;
 	memory_access< 5, 0,  0, ENDIANNESS_BIG>::specific m_io;

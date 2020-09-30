@@ -147,7 +147,7 @@ private:
 	u16 m_EFSPAN[0x48];
 	AICA_SLOT m_Slots[64];
 
-	memory_access<23, 1, 0, ENDIANNESS_LITTLE>::cache m_cache;
+	memory_access<23, 1, 0, ENDIANNESS_LITTLE>::specific m_cache;
 	memory_access<23, 1, 0, ENDIANNESS_LITTLE>::specific m_data;
 	sound_stream * m_stream;
 

@@ -189,7 +189,7 @@ private:
 	address_space_config  m_data_config;
 	address_space_config  m_io_config;
 
-	memory_access<16, 0, 0, ENDIANNESS_BIG>::cache m_cache;
+	memory_access<16, 0, 0, ENDIANNESS_BIG>::specific m_cache;
 	memory_access<16, 0, 0, ENDIANNESS_BIG>::specific m_program; // program space (ROM or flash)
 	memory_access< 9, 0, 0, ENDIANNESS_BIG>::specific m_data;    // internal RAM/register
 	memory_access< 8, 0, 0, ENDIANNESS_BIG>::specific m_io;      // I/O ports

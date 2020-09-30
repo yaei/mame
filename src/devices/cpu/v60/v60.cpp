@@ -412,14 +412,14 @@ void v60_device::device_start()
 	m_program = &space(AS_PROGRAM);
 	if (m_program->data_width() == 16)
 	{
-		m_program->cache(m_cache16);
+		m_program->specific(m_cache16);
 		m_pr8  = [this](offs_t address) -> u8  { return m_cache16.read_byte(address); };
 		m_pr16 = [this](offs_t address) -> u16 { return m_cache16.read_word_unaligned(address); };
 		m_pr32 = [this](offs_t address) -> u32 { return m_cache16.read_dword_unaligned(address); };
 	}
 	else
 	{
-		m_program->cache(m_cache32);
+		m_program->specific(m_cache32);
 		m_pr8  = [this](offs_t address) -> u8  { return m_cache32.read_byte(address); };
 		m_pr16 = [this](offs_t address) -> u16 { return m_cache32.read_word_unaligned(address); };
 		m_pr32 = [this](offs_t address) -> u32 { return m_cache32.read_dword_unaligned(address); };

@@ -39,7 +39,7 @@ protected:
 	address_space_config m_data_config;
 
 private:
-	memory_access<16, 0, 0, ENDIANNESS_LITTLE>::cache m_dcache;
+	memory_access<16, 0, 0, ENDIANNESS_LITTLE>::specific m_dcache;
 	memory_access<16, 0, 0, ENDIANNESS_LITTLE>::specific m_data;
 	inline u8 data_read_byte(offs_t a)
 	{
