@@ -250,6 +250,12 @@ void fortyl_state::bank_select_w(uint8_t data)
 //      popmessage("WRONG BANK SELECT = %x !!!!\n",data);
 	}
 
+	static uint8_t data_last = 0xff;
+	if( data != data_last )
+	{
+		printf( "bank_select: 0x%02x\n", data );
+		data_last = data;
+	}
 	membank("bank1")->set_entry(data & 1);
 }
 
@@ -285,6 +291,37 @@ uint8_t fortyl_state::snd_flag_r()
 
 /***************************************************************************/
 
+void fortyl_state::soundlatch_write( uint8_t data )
+{
+	if(
+			data == 0x14
+		||	data == 0x1a
+		||	data == 0x1b
+		)
+	return;
+
+	static uint8_t data_last = 0xff;
+	if( data != data_last )
+	{
+		printf( "soundlatch_write: 0x%02x\n", data );
+		data_last = data;
+	}
+	/*
+	static uint8_t track_last = 0xf5;
+	if( data == 0x5d )
+	{
+		data = track_last;
+		if( track_last == 0xff )
+			track_last = 0xf0;
+		else
+			track_last += 1;
+		printf( "\toverride:0x%02x\n", data );
+	}
+	*/
+	m_soundlatch->write( data );
+}
+
+
 void fortyl_state::_40love_map(address_map &map)
 {
 	map(0x0000, 0x7fff).rom();
@@ -293,8 +330,10 @@ void fortyl_state::_40love_map(address_map &map)
 	map(0x8801, 0x8801).r(FUNC(fortyl_state::fortyl_mcu_status_r)).w("mb14241", FUNC(mb14241_device::shift_count_w)); //pixel layer related
 	map(0x8802, 0x8802).w(FUNC(fortyl_state::bank_select_w));
 	map(0x8803, 0x8803).rw("mb14241", FUNC(mb14241_device::shift_result_r), FUNC(mb14241_device::shift_data_w)); //pixel layer related
-	map(0x8804, 0x8804).r(m_soundlatch2, FUNC(generic_latch_8_device::read));
-	map(0x8804, 0x8804).w("soundlatch", FUNC(generic_latch_8_device::write));
+	//map(0x8804, 0x8804).r(m_soundlatch2, FUNC(generic_latch_8_device::read));
+	//map(0x8804, 0x8804).w("soundlatch", FUNC(generic_latch_8_device::write));
+	map(0x8804, 0x8804).r(m_soundlatch2, FUNC(generic_latch_8_device::read)).w(FUNC(fortyl_state::soundlatch_write));
+
 	map(0x8805, 0x8805).r(FUNC(fortyl_state::snd_flag_r)).nopw(); /*sound_reset*/ //????
 	map(0x8807, 0x8807).nopr(); /* unknown */
 	map(0x8808, 0x8808).portr("DSW3");
@@ -322,8 +361,9 @@ void fortyl_state::undoukai_map(address_map &map)
 	map(0xa801, 0xa801).r(FUNC(fortyl_state::fortyl_mcu_status_r)).w("mb14241", FUNC(mb14241_device::shift_count_w)); //pixel layer related
 	map(0xa802, 0xa802).w(FUNC(fortyl_state::bank_select_w));
 	map(0xa803, 0xa803).rw("mb14241", FUNC(mb14241_device::shift_result_r), FUNC(mb14241_device::shift_data_w)); //pixel layer related
-	map(0xa804, 0xa804).r(m_soundlatch2, FUNC(generic_latch_8_device::read));
-	map(0xa804, 0xa804).w("soundlatch", FUNC(generic_latch_8_device::write));
+	//map(0xa804, 0xa804).r(m_soundlatch2, FUNC(generic_latch_8_device::read));
+	//map(0xa804, 0xa804).w(m_soundlatch, FUNC(generic_latch_8_device::write));
+	map(0xa804, 0xa804).r(m_soundlatch2, FUNC(generic_latch_8_device::read)).w(FUNC(fortyl_state::soundlatch_write));
 	map(0xa805, 0xa805).r(FUNC(fortyl_state::snd_flag_r)).nopw(); /*sound_reset*/    //????
 	map(0xa807, 0xa807).nopr().nopw(); /* unknown */
 	map(0xa808, 0xa808).portr("DSW3");
@@ -390,7 +430,7 @@ void fortyl_state::sound_map(address_map &map)
 	map(0xca00, 0xca0d).w(m_msm, FUNC(msm5232_device::write));
 	map(0xcc00, 0xcc00).w(FUNC(fortyl_state::sound_control_0_w));
 	map(0xce00, 0xce00).w(FUNC(fortyl_state::sound_control_1_w));
-	map(0xd800, 0xd800).r("soundlatch", FUNC(generic_latch_8_device::read));
+	map(0xd800, 0xd800).r(m_soundlatch, FUNC(generic_latch_8_device::read));
 	map(0xd800, 0xd800).w(m_soundlatch2, FUNC(generic_latch_8_device::write));
 	map(0xda00, 0xda00).nopr(); // unknown read
 	map(0xda00, 0xda00).w("soundnmi", FUNC(input_merger_device::in_set<1>)); // enable NMI
@@ -399,6 +439,47 @@ void fortyl_state::sound_map(address_map &map)
 	map(0xe000, 0xefff).rom(); /* space for diagnostics ROM */
 }
 
+
+CUSTOM_INPUT_MEMBER( fortyl_state::debug_in_r )
+{
+	static uint8_t data_last = 0x00;
+	static uint8_t sound_id = 0x00;
+	uint8_t data = m_debug_input->read();
+	if( data != data_last )
+	{
+		//printf( "0x%02x", data );
+		uint8_t bit_modified = data ^ data_last;
+		uint8_t bit_push = data & bit_modified;
+		data_last = data;
+		
+		if( bit_push & 0x01 )
+		{
+			sound_id -= 1;
+			printf( "sound id:0x%02x\n", sound_id );
+		}
+		if( bit_push & 0x02 )
+		{
+			sound_id += 1;
+			printf( "sound id:0x%02x\n", sound_id );
+		}
+		if( bit_push & 0x04 )
+		{
+			m_soundlatch->write( sound_id );
+			printf( "soundlatch write:0x%02x\n", sound_id );
+		}
+		if( bit_push & 0x08 )
+		{
+			//m_soundlatch->write( *(address_space*)nullptr, 0, 0xff );
+			//printf( "soundlatch write:0x%02x\n", 0xff );
+			m_soundlatch->write( 0x00 );
+			m_ta7630->set_channel_volume(m_msm,0, 0x0f );
+			m_ta7630->set_channel_volume(m_msm,1, 0x0f );
+			m_ta7630->set_device_volume(m_ay, 0x0f);
+			printf( "sound stop\n" );
+		}
+	};
+	return 0;
+}
 
 static INPUT_PORTS_START( 40love )
 	PORT_START("DSW1")
@@ -503,6 +584,15 @@ static INPUT_PORTS_START( 40love )
 	PORT_BIT( 0x20, IP_ACTIVE_LOW, IPT_BUTTON2 ) PORT_COCKTAIL PORT_NAME("P2 Lob Button")
 	PORT_BIT( 0x40, IP_ACTIVE_LOW, IPT_UNKNOWN )
 	PORT_BIT( 0x80, IP_ACTIVE_LOW, IPT_BUTTON1 ) PORT_COCKTAIL PORT_NAME("P2 Stroke Button")
+
+	PORT_START("DEBUG")
+	PORT_BIT( 0x01, 0x00, IPT_START3 )
+	PORT_BIT( 0x02, 0x00, IPT_START4 )
+	PORT_BIT( 0x04, 0x00, IPT_COIN3 )
+	PORT_BIT( 0x08, 0x00, IPT_COIN4 )
+	PORT_START("DEBUG_CALLBACK")
+	PORT_BIT( 0x01, 0x00, IPT_START3 )	 PORT_CUSTOM_MEMBER(fortyl_state, debug_in_r)
+	
 INPUT_PORTS_END
 
 static INPUT_PORTS_START( undoukai )
@@ -563,6 +653,8 @@ static INPUT_PORTS_START( undoukai )
 	PORT_BIT( 0x01, IP_ACTIVE_LOW, IPT_BUTTON3 ) PORT_PLAYER(4)
 	PORT_BIT( 0x10, IP_ACTIVE_LOW, IPT_UNKNOWN )
 	PORT_BIT( 0x20, IP_ACTIVE_LOW, IPT_UNKNOWN )
+
+	
 INPUT_PORTS_END
 
 

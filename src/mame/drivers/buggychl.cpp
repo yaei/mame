@@ -322,6 +322,47 @@ CUSTOM_INPUT_MEMBER( buggychl_state::pedal_in_r )
 	return m_pedal_input->read() >> 4;
 }
 
+CUSTOM_INPUT_MEMBER( buggychl_state::debug_in_r )
+{
+	static uint8_t data_last = 0x00;
+	static uint8_t sound_id = 0xf5;
+	uint8_t data = m_debug_input->read();
+	if( data != data_last )
+	{
+		//printf( "0x%02x", data );
+		uint8_t bit_modified = data ^ data_last;
+		uint8_t bit_push = data & bit_modified;
+		data_last = data;
+		
+		if( bit_push & 0x01 )
+		{
+			sound_id -= 1;
+			printf( "sound id:0x%02x\n", sound_id );
+		}
+		if( bit_push & 0x02 )
+		{
+			sound_id += 1;
+			printf( "sound id:0x%02x\n", sound_id );
+		}
+		if( bit_push & 0x04 )
+		{
+			ta7630_volbal_msm_w( 0xff );
+			m_msm->reset();
+			m_soundlatch->write( sound_id );
+			printf( "soundlatch write:0x%02x\n", sound_id );
+		}
+		if( bit_push & 0x08 )
+		{
+			//m_soundlatch->write( *(address_space*)nullptr, 0, 0xff );
+			//printf( "soundlatch write:0x%02x\n", 0xff );
+			m_soundlatch->write( 0x00 );
+			ta7630_volbal_msm_w( 0x08 );
+			printf( "sound stop\n" );
+		}
+	};
+	return 0;
+}
+
 
 static INPUT_PORTS_START( buggychl )
 	PORT_START("DSW1")
@@ -424,6 +465,15 @@ static INPUT_PORTS_START( buggychl )
 
 	PORT_START("WHEEL") /* wheel */
 	PORT_BIT( 0xff, 0x00, IPT_DIAL ) PORT_SENSITIVITY(30) PORT_KEYDELTA(15) PORT_REVERSE
+
+	PORT_START("DEBUG")
+	PORT_BIT( 0x01, 0x00, IPT_START3 )
+	PORT_BIT( 0x02, 0x00, IPT_START4 )
+	PORT_BIT( 0x04, 0x00, IPT_COIN3 )
+	PORT_BIT( 0x08, 0x00, IPT_COIN4 )
+	PORT_START("DEBUG_CALLBACK")
+	PORT_BIT( 0x01, 0x00, IPT_START3 )	 PORT_CUSTOM_MEMBER(buggychl_state, debug_in_r)
+	
 INPUT_PORTS_END
 
 

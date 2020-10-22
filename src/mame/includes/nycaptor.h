@@ -30,7 +30,8 @@ public:
 		m_palette(*this, "palette"),
 		m_soundlatch(*this, "soundlatch"),
 		m_soundlatch2(*this, "soundlatch2"),
-		m_soundnmi(*this, "soundnmi")
+		m_soundnmi(*this, "soundnmi"),
+		m_debug_input(*this, "DEBUG")
 	{ }
 
 	void nycaptor(machine_config &config);
@@ -117,6 +118,11 @@ private:
 	void nycaptor_master_map(address_map &map);
 	void nycaptor_slave_map(address_map &map);
 	void sound_map(address_map &map);
+
+	required_ioport m_debug_input;
+	void soundlatch_write(uint8_t data);
+public:
+	DECLARE_CUSTOM_INPUT_MEMBER( debug_in_r );
 };
 
 #endif // MAME_INCLUDES_NYCAPTOR_H

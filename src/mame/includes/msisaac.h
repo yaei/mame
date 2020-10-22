@@ -31,7 +31,8 @@ public:
 		m_ta7630(*this, "ta7630"),
 		m_gfxdecode(*this, "gfxdecode"),
 		m_palette(*this, "palette"),
-		m_soundlatch(*this, "soundlatch")
+		m_soundlatch(*this, "soundlatch"),
+		m_debug_input(*this, "DEBUG")
 	{ }
 
 	void msisaac(machine_config &config);
@@ -108,6 +109,10 @@ private:
 	void draw_sprites( bitmap_ind16 &bitmap, const rectangle &cliprect );
 	void msisaac_map(address_map &map);
 	void msisaac_sound_map(address_map &map);
+
+	required_ioport m_debug_input;
+public:
+	DECLARE_CUSTOM_INPUT_MEMBER( debug_in_r );
 };
 
 #endif // MAME_INCLUDES_MSISAAC_H

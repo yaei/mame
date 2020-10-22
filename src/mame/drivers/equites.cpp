@@ -394,7 +394,7 @@ TIMER_DEVICE_CALLBACK_MEMBER(equites_state::equites_scanline)
 TIMER_DEVICE_CALLBACK_MEMBER(splndrbt_state::splndrbt_scanline)
 {
 	int scanline = param;
-
+	
 	if(scanline == 224) // vblank-out irq
 		m_maincpu->set_input_line(1, HOLD_LINE);
 
@@ -453,14 +453,14 @@ void equites_state::equites_map(address_map &map)
 {
 	equites_common_map(map);
 	map(0x040000, 0x040fff).ram();
-	map(0x180001, 0x180001).w("sound_board", FUNC(ad_59mc07_device::sound_command_w));
+	map(0x180001, 0x180001).w(m_ad_59mc07, FUNC(ad_59mc07_device::sound_command_w));
 }
 
 void gekisou_state::gekisou_map(address_map &map)
 {
 	equites_common_map(map);
 	map(0x040000, 0x040fff).ram().share("nvram"); // mainram is battery-backed
-	map(0x180001, 0x180001).w("sound_board", FUNC(ad_59mc07_device::sound_command_w));
+	map(0x180001, 0x180001).w(m_ad_59mc07, FUNC(ad_59mc07_device::sound_command_w));
 	map(0x580000, 0x580001).select(0x020000).w(FUNC(gekisou_state::gekisou_unknown_bit_w));
 }
 
@@ -468,7 +468,8 @@ void equites_state::bngotime_map(address_map &map)
 {
 	equites_common_map(map);
 	map(0x040000, 0x040fff).ram();
-	map(0x180001, 0x180001).w("sound_board", FUNC(ad_60mc01_device::sound_command_w));
+	map(0x180001, 0x180001).w(m_ad_59mc07, FUNC(ad_60mc01_device::sound_command_w));
+	//map(0x180001, 0x180001).w(m_ad_59mc07, FUNC(ad_59mc07_device::sound_command_w));
 }
 
 void splndrbt_state::splndrbt_map(address_map &map)
@@ -481,7 +482,7 @@ void splndrbt_state::splndrbt_map(address_map &map)
 	map(0x0c0000, 0x0c0000).select(0x020000).w(FUNC(splndrbt_state::equites_bgcolor_w));
 	map(0x0c0001, 0x0c0001).select(0x03c000).lw8(NAME([this] (offs_t offset, u8 data) { m_mainlatch->write_a3(offset >> 14); }));
 	map(0x100000, 0x100001).w(FUNC(splndrbt_state::splndrbt_bg_scrollx_w));
-	map(0x140001, 0x140001).w("sound_board", FUNC(ad_59mc07_device::sound_command_w));
+	map(0x140001, 0x140001).w(m_ad_59mc07, FUNC(ad_59mc07_device::sound_command_w));
 	map(0x1c0000, 0x1c0001).w(FUNC(splndrbt_state::splndrbt_bg_scrolly_w));
 	map(0x180000, 0x1807ff).rw(m_alpha_8201, FUNC(alpha_8201_device::ext_ram_r), FUNC(alpha_8201_device::ext_ram_w)).umask16(0x00ff);
 	map(0x200000, 0x200fff).mirror(0x001000).rw(FUNC(splndrbt_state::equites_fg_videoram_r), FUNC(splndrbt_state::equites_fg_videoram_w)).umask16(0x00ff);
@@ -489,6 +490,46 @@ void splndrbt_state::splndrbt_map(address_map &map)
 	map(0x400800, 0x400fff).ram();
 	map(0x600000, 0x6000ff).ram().share("spriteram");   // sprite RAM 0,1
 	map(0x600100, 0x6001ff).ram().share("spriteram_2"); // sprite RAM 2 (8-bit)
+}
+
+
+
+CUSTOM_INPUT_MEMBER( equites_state::debug_in_r )
+{
+	static uint8_t data_last = 0x00;
+	static uint8_t sound_id = 0x00;
+	uint8_t data = m_debug_input->read();
+	if( data != data_last )
+	{
+		//printf( "0x%02x", data );
+		uint8_t bit_modified = data ^ data_last;
+		uint8_t bit_push = data & bit_modified;
+		data_last = data;
+		
+		if( bit_push & 0x01 )
+		{
+			sound_id -= 1;
+			printf( "sound id:0x%02x\n", sound_id );
+		}
+		if( bit_push & 0x02 )
+		{
+			sound_id += 1;
+			printf( "sound id:0x%02x\n", sound_id );
+		}
+		if( bit_push & 0x04 )
+		{
+			m_ad_59mc07->sound_command_w( sound_id );
+			printf( "sound id write:0x%02x\n", sound_id );
+		}
+		if( bit_push & 0x08 )
+		{
+			//m_soundlatch->write( *(address_space*)nullptr, 0, 0xff );
+			//printf( "soundlatch write:0x%02x\n", 0xff );
+			m_ad_59mc07->sound_command_w( 0x00 );
+			printf( "sound stop\n" );
+		}
+	};
+	return 0;
 }
 
 
@@ -549,6 +590,15 @@ static INPUT_PORTS_START( equites )
 	/* this is actually a variable resistor */
 	PORT_START(FRQ_ADJUSTER_TAG)
 	PORT_ADJUSTER(25, "MSM5232 Clock") // approximate factory setting
+
+	PORT_START("DEBUG")
+	PORT_BIT( 0x01, 0x00, IPT_START3 )
+	PORT_BIT( 0x02, 0x00, IPT_START4 )
+	PORT_BIT( 0x04, 0x00, IPT_COIN3 )
+	PORT_BIT( 0x08, 0x00, IPT_COIN4 )
+	PORT_START("DEBUG_CALLBACK")
+	PORT_BIT( 0x01, 0x00, IPT_START3 )	 PORT_CUSTOM_MEMBER(equites_state, debug_in_r)
+
 INPUT_PORTS_END
 
 /******************************************************************************/
@@ -572,6 +622,15 @@ static INPUT_PORTS_START( gekisou )
 	/* this is actually a variable resistor */
 	PORT_START(FRQ_ADJUSTER_TAG)
 	PORT_ADJUSTER(24, "MSM5232 Clock") // approximate factory setting
+
+	PORT_START("DEBUG")
+	PORT_BIT( 0x01, 0x00, IPT_START3 )
+	PORT_BIT( 0x02, 0x00, IPT_START4 )
+	PORT_BIT( 0x04, 0x00, IPT_COIN3 )
+	PORT_BIT( 0x08, 0x00, IPT_COIN4 )
+	PORT_START("DEBUG_CALLBACK")
+	PORT_BIT( 0x01, 0x00, IPT_START3 )	 PORT_CUSTOM_MEMBER(equites_state, debug_in_r)
+
 INPUT_PORTS_END
 
 /******************************************************************************/
@@ -605,6 +664,15 @@ static INPUT_PORTS_START( bullfgtr )
 	/* this is actually a variable resistor */
 	PORT_START(FRQ_ADJUSTER_TAG)
 	PORT_ADJUSTER(33, "MSM5232 Clock") // approximate factory setting
+
+	PORT_START("DEBUG")
+	PORT_BIT( 0x01, 0x00, IPT_START3 )
+	PORT_BIT( 0x02, 0x00, IPT_START4 )
+	PORT_BIT( 0x04, 0x00, IPT_COIN3 )
+	PORT_BIT( 0x08, 0x00, IPT_COIN4 )
+	PORT_START("DEBUG_CALLBACK")
+	PORT_BIT( 0x01, 0x00, IPT_START3 )	 PORT_CUSTOM_MEMBER(equites_state, debug_in_r)
+
 INPUT_PORTS_END
 
 /******************************************************************************/
@@ -638,6 +706,15 @@ static INPUT_PORTS_START( kouyakyu )
 	/* this is actually a variable resistor */
 	PORT_START(FRQ_ADJUSTER_TAG)
 	PORT_ADJUSTER(33, "MSM5232 Clock") // approximate factory setting
+
+	PORT_START("DEBUG")
+	PORT_BIT( 0x01, 0x00, IPT_START3 )
+	PORT_BIT( 0x02, 0x00, IPT_START4 )
+	PORT_BIT( 0x04, 0x00, IPT_COIN3 )
+	PORT_BIT( 0x08, 0x00, IPT_COIN4 )
+	PORT_START("DEBUG_CALLBACK")
+	PORT_BIT( 0x01, 0x00, IPT_START3 )	 PORT_CUSTOM_MEMBER(equites_state, debug_in_r)
+
 INPUT_PORTS_END
 
 /******************************************************************************/
@@ -671,6 +748,15 @@ static INPUT_PORTS_START( splndrbt )
 	/* this is actually a variable resistor */
 	PORT_START(FRQ_ADJUSTER_TAG)
 	PORT_ADJUSTER(28, "MSM5232 Clock") // approximate factory setting
+
+	PORT_START("DEBUG")
+	PORT_BIT( 0x01, 0x00, IPT_START3 )
+	PORT_BIT( 0x02, 0x00, IPT_START4 )
+	PORT_BIT( 0x04, 0x00, IPT_COIN3 )
+	PORT_BIT( 0x08, 0x00, IPT_COIN4 )
+	PORT_START("DEBUG_CALLBACK")
+	PORT_BIT( 0x01, 0x00, IPT_START3 )	 PORT_CUSTOM_MEMBER(equites_state, debug_in_r)
+
 INPUT_PORTS_END
 
 /******************************************************************************/
@@ -720,6 +806,15 @@ static INPUT_PORTS_START( hvoltage )
 	/* this is actually a variable resistor */
 	PORT_START(FRQ_ADJUSTER_TAG)
 	PORT_ADJUSTER(27, "MSM5232 Clock") // approximate factory setting
+
+	PORT_START("DEBUG")
+	PORT_BIT( 0x01, 0x00, IPT_START3 )
+	PORT_BIT( 0x02, 0x00, IPT_START4 )
+	PORT_BIT( 0x04, 0x00, IPT_COIN3 )
+	PORT_BIT( 0x08, 0x00, IPT_COIN4 )
+	PORT_START("DEBUG_CALLBACK")
+	PORT_BIT( 0x01, 0x00, IPT_START3 )	 PORT_CUSTOM_MEMBER(equites_state, debug_in_r)
+
 INPUT_PORTS_END
 
 static INPUT_PORTS_START( bngotime ) // TODO: possibly still missing something? Couldn't find any use for the unknown inputs
@@ -750,6 +845,15 @@ static INPUT_PORTS_START( bngotime ) // TODO: possibly still missing something? 
 	PORT_BIT( 0x2000, IP_ACTIVE_HIGH, IPT_GAMBLE_PAYOUT )
 	PORT_BIT( 0x4000, IP_ACTIVE_HIGH, IPT_GAMBLE_KEYOUT )
 	PORT_SERVICE_NO_TOGGLE( 0x8000, IP_ACTIVE_HIGH ) // settings // allows to set coinage, odds, 'rank', etc.
+
+	PORT_START("DEBUG")
+	PORT_BIT( 0x01, 0x00, IPT_START3 )
+	PORT_BIT( 0x02, 0x00, IPT_START4 )
+	PORT_BIT( 0x04, 0x00, IPT_COIN3 )
+	PORT_BIT( 0x08, 0x00, IPT_COIN4 )
+	PORT_START("DEBUG_CALLBACK")
+	PORT_BIT( 0x01, 0x00, IPT_START3 )	 PORT_CUSTOM_MEMBER(equites_state, debug_in_r)
+
 INPUT_PORTS_END
 
 /******************************************************************************/
@@ -909,6 +1013,8 @@ void equites_state::bngotime(machine_config &config)
 	m_maincpu->set_addrmap(AS_PROGRAM, &equites_state::bngotime_map);
 
 	AD_60MC01(config.replace(), "sound_board");
+	//AD_60MC01(config, "sound_board");
+	//AD_59MC07(config.replace(), "sound_board");
 }
 
 void splndrbt_state::splndrbt(machine_config &config)

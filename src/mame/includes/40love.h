@@ -26,7 +26,9 @@ public:
 		, m_ta7630(*this,"ta7630")
 		, m_gfxdecode(*this, "gfxdecode")
 		, m_palette(*this, "palette")
+		, m_soundlatch(*this, "soundlatch")
 		, m_soundlatch2(*this, "soundlatch2")
+		, m_debug_input(*this, "DEBUG")
 		, m_videoram(*this, "videoram")
 		, m_video_ctrl(*this, "video_ctrl")
 		, m_spriteram(*this, "spriteram")
@@ -52,6 +54,8 @@ public:
 	void sound_map(address_map &map);
 	void undoukai_map(address_map &map);
 
+	DECLARE_CUSTOM_INPUT_MEMBER( debug_in_r );
+
 private:
 	virtual void machine_start() override;
 	virtual void machine_reset() override;
@@ -72,6 +76,7 @@ private:
 	void sound_control_2_w(uint8_t data);
 	void sound_control_3_w(uint8_t data);
 	TILE_GET_INFO_MEMBER(get_bg_tile_info);
+	void soundlatch_write(uint8_t data);
 
 	/* devices */
 	required_device<cpu_device> m_audiocpu;
@@ -82,7 +87,9 @@ private:
 	required_device<ta7630_device> m_ta7630;
 	required_device<gfxdecode_device> m_gfxdecode;
 	required_device<palette_device> m_palette;
+	required_device<generic_latch_8_device> m_soundlatch;
 	required_device<generic_latch_8_device> m_soundlatch2;
+	required_ioport m_debug_input;
 
 	/* memory pointers */
 	required_shared_ptr<uint8_t> m_videoram;

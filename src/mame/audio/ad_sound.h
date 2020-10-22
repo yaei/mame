@@ -37,7 +37,16 @@ public:
 	// construction/destruction
 	ad_59mc07_device(const machine_config &mconfig, const char *tag, device_t *owner, u32 clock = 0);
 
-	void sound_command_w(uint8_t data) { m_soundlatch->write(data); }
+	void sound_command_w(uint8_t data)
+	{
+		static uint8_t data_last = 0xff;
+		if( data != data_last )
+		{
+			printf( "soundlatch_write: 0x%02x\n", data );
+			data_last = data;
+		}
+		m_soundlatch->write(data);
+	}
 
 protected:
 	// device level overrides

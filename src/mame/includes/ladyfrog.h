@@ -27,7 +27,8 @@ public:
 		m_msm(*this, "msm"),
 		m_gfxdecode(*this, "gfxdecode"),
 		m_palette(*this, "palette"),
-		m_soundlatch(*this, "soundlatch")
+		m_soundlatch(*this, "soundlatch"),
+		m_debug_input(*this, "DEBUG")
 	{ }
 
 	void toucheme(machine_config &config);
@@ -65,6 +66,7 @@ private:
 	required_device<gfxdecode_device> m_gfxdecode;
 	required_device<palette_device> m_palette;
 	required_device<generic_latch_8_device> m_soundlatch;
+	required_ioport m_debug_input;
 
 	uint8_t from_snd_r();
 	void to_main_w(uint8_t data);
@@ -92,6 +94,9 @@ private:
 	void draw_sprites( bitmap_ind16 &bitmap, const rectangle &cliprect );
 	void ladyfrog_map(address_map &map);
 	void ladyfrog_sound_map(address_map &map);
+
+public:
+	DECLARE_CUSTOM_INPUT_MEMBER( debug_in_r );
 };
 
 #endif // MAME_INCLUDES_LADYFROG_H

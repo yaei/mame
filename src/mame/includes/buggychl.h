@@ -41,6 +41,7 @@ public:
 		m_soundlatch(*this, "soundlatch"),
 		m_soundlatch2(*this, "soundlatch2"),
 		m_pedal_input(*this, "PEDAL"),
+		m_debug_input(*this, "DEBUG"),
 		m_led(*this, "led%u", 0U)
 	{ }
 
@@ -66,6 +67,7 @@ public:
 	required_device<generic_latch_8_device> m_soundlatch;
 	required_device<generic_latch_8_device> m_soundlatch2;
 	required_ioport m_pedal_input;
+	required_ioport m_debug_input;
 
 	output_finder<1> m_led;
 
@@ -90,6 +92,7 @@ public:
 	void buggychl_palette(palette_device &palette) const;
 	uint32_t screen_update_buggychl(screen_device &screen, bitmap_ind16 &bitmap, const rectangle &cliprect);
 	DECLARE_CUSTOM_INPUT_MEMBER( pedal_in_r );
+	DECLARE_CUSTOM_INPUT_MEMBER( debug_in_r );
 
 	void buggychl(machine_config &config);
 	void buggychl_map(address_map &map);

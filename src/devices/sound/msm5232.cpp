@@ -101,6 +101,8 @@ void msm5232_device::device_reset()
 	m_EN_out4[1]    = 0;
 	m_EN_out2[1]    = 0;
 
+	m_counter = 0;	// eito 20201021
+
 	gate_update();
 }
 
@@ -206,6 +208,7 @@ static FILE *sample[9];
  *
  * external capacitor is discharged through R52
  * in approx. 5*28750 * 0.39e-6
+* 
  */
 
 
@@ -243,6 +246,10 @@ void msm5232_device::init_tables()
 	scale = ((double)m_chip_clock) / (double)m_rate;
 	m_noise_step = ((1<<STEP_SH)/128.0) * scale; /* step of the rng reg in 16.16 format */
 	/* logerror("noise step=%8x\n", m_noise_step); */
+
+	printf( "m_chip_clock = %d\n", m_chip_clock );
+	printf( "m_rate = %d\n", m_rate );
+	printf( "m_UpdateStep = %d\n", m_UpdateStep );
 
 #if 0
 {
@@ -338,9 +345,18 @@ void msm5232_device::init(int clock, int rate)
 	}
 }
 
+// eito 20201021
+void msm5232_device::reset()
+{
+	device_reset();
+};
+
 
 void msm5232_device::write(offs_t offset, uint8_t data)
 {
+	//printf( "msm5232: write: %016lld: %02x %02x\n", m_counter, offset, data );
+
+
 	if (offset > 0x0d)
 		return;
 
@@ -349,13 +365,27 @@ void msm5232_device::write(offs_t offset, uint8_t data)
 	if (offset < 0x08) /* pitch */
 	{
 		int ch = offset&7;
+		if( ch == 2 )
+		printf( "msm5232: write: %016lld: %02x %02x\n", m_counter, offset, data );
+
 
 		m_voi[ch].GF = ((data&0x80)>>7);
 		if (ch == 7)
 			gate_update();
 
+		if( m_voi[ch].counter_attacked )
+		{
+			//printf( "msm5232: write: %016lld: %02x %02x\n", m_counter, offset, data );
+		};
+
 		if(data&0x80)
 		{
+			if( m_voi[ch].counter_attacked )
+			{
+				printf( "msm5232:  KEY ON:  channel #%d  caught attack command: dur=%lld\n", ch, m_counter - m_voi[ch].counter_attacked );
+				m_voi[ch].counter_attacked = 0;
+			};
+
 			if(data >= 0xd8)
 			{
 				/*if ((data&0x7f) != 0x5f) logerror("MSM5232: WRONG PITCH CODE = %2x\n",data&0x7f);*/
@@ -395,10 +425,19 @@ void msm5232_device::write(offs_t offset, uint8_t data)
 		}
 		else
 		{
+			if( m_voi[ch].counter_attacked )
+			{
+				printf( "msm5232:  KEY OFF: channel #%d  caught attack command: dur=%lld\n", ch, m_counter - m_voi[ch].counter_attacked );
+				m_voi[ch].counter_attacked = 0;
+			};
+
 			if ( !m_voi[ch].eg_arm )    /* arm = 0 */
 				m_voi[ch].eg_sect = 2;  /* Key Off -> go to release */
 			else                            /* arm = 1 */
+			{
 				m_voi[ch].eg_sect = 1;  /* Key Off -> go to decay */
+				m_voi[ch].counter_decayed = m_counter;
+			}
 		}
 	}
 	else
@@ -408,12 +447,16 @@ void msm5232_device::write(offs_t offset, uint8_t data)
 		{
 		case 0x08:  /* group1 attack */
 			for (i=0; i<4; i++)
+			{
 				m_voi[i].ar_rate   = m_ar_tbl[data&0x7] * m_external_capacity[i];
+			}
 			break;
 
 		case 0x09:  /* group2 attack */
 			for (i=0; i<4; i++)
+			{
 				m_voi[i+4].ar_rate = m_ar_tbl[data&0x7] * m_external_capacity[i+4];
+			};
 			break;
 
 		case 0x0a:  /* group1 decay */
@@ -437,13 +480,44 @@ void msm5232_device::write(offs_t offset, uint8_t data)
 			m_control1 = data;
 
 			for (i=0; i<4; i++)
+			{
+				if( (data&0x10) && !(m_voi[i].eg_arm&0x10) )
+				{
+					printf( "msm5232: group1 channel #%d arm=1 eg_sect=%d eg=%d", i, m_voi[i].eg_sect, m_voi[i].eg );
+					if( m_voi[i].eg_sect == 1 )
+					{
+						printf( "  ATTACK! data=%02x mode=%02x pitch=%02x decaylength=%lld", data, m_voi[i].mode, m_voi[i].pitch, m_counter - m_voi[i].counter_decayed );
+						m_voi[i].eg_sect = 0;
+						m_voi[i].counter_attacked = m_counter;
+					}
+					printf( "\n" );
+				}
+				if( !(data&0x10) && (m_voi[i].eg_arm&0x10) )
+				{
+					printf( "msm5232: group1 channel #%d arm=0 eg_sect=%d eg=%d", i, m_voi[i].eg_sect, m_voi[i].eg );
+					if( m_voi[i].counter_attacked )
+					{
+						printf( "  CLEARED: dur=%lld", m_counter - m_voi[i].counter_attacked );
+						m_voi[i].counter_attacked = 0;
+					}
+					printf( "\n" );
+				}
 				m_voi[i].eg_arm = data&0x10;
+			}
+
+			{
+				uint8_t h0 = (m_EN_out16[0]&1)|(m_EN_out8[0]&2)|(m_EN_out4[0]&4)|(m_EN_out2[0]&8 ) ;
+				uint8_t h1 = data & 0x0f;
+				if( h0^h1 )
+				{
+					printf( "msm5232: harmony changed: group1 %02x -> %02x\n", h0, h1 );
+				}
+			}
 
 			m_EN_out16[0] = (data&1) ? ~0:0;
 			m_EN_out8[0]  = (data&2) ? ~0:0;
 			m_EN_out4[0]  = (data&4) ? ~0:0;
 			m_EN_out2[0]  = (data&8) ? ~0:0;
-
 			break;
 
 		case 0x0d:  /* group2 control */
@@ -457,14 +531,46 @@ void msm5232_device::write(offs_t offset, uint8_t data)
 			m_control2 = data;
 			gate_update();
 
-			for (i=0; i<4; i++)
-				m_voi[i+4].eg_arm = data&0x10;
+			for (int j=0; j<4; j++)
+			{
+				int i = j+4;
+				if( (data&0x10) && !(m_voi[i].eg_arm&0x10) )
+				{
+					printf( "msm5232: group2 channel #%d arm=1 eg_sect=%d eg=%d", i, m_voi[i].eg_sect, m_voi[i].eg );
+					if( m_voi[i].eg_sect == 1 )
+					{
+						printf( "  ATTACK! data=%02x mode=%02x pitch=%02x eg=%d decaylength=%lld", data, m_voi[i].mode, m_voi[i].pitch, m_voi[i].eg, m_counter - m_voi[i].counter_decayed );
+						m_voi[i].eg_sect = 0;
+						m_voi[i].counter_attacked = m_counter;
+					}
+					printf( "\n" );
+				}
+				if( !(data&0x10) && (m_voi[i].eg_arm&0x10) )
+				{
+					printf( "msm5232: group2 channel #%d arm=0 eg_sect=%d eg=%d", i, m_voi[i].eg_sect, m_voi[i].eg );
+					if( m_voi[i].counter_attacked )
+					{
+						printf( "  CLEARED: dur=%lld", m_counter - m_voi[i].counter_attacked );
+						m_voi[i].counter_attacked = 0;
+					}
+					printf( "\n" );
+				}
+				m_voi[i].eg_arm = data&0x10;
+			}
+
+			{
+				uint8_t h0 = (m_EN_out16[1]&1)|(m_EN_out8[1]&2)|(m_EN_out4[1]&4)|(m_EN_out2[1]&8 ) ;
+				uint8_t h1 = data & 0x0f;
+				if( h0^h1 )
+				{
+					printf( "msm5232: harmony changed: group2 %02x -> %02x\n", h0, h1 );
+				}
+			}
 
 			m_EN_out16[1] = (data&1) ? ~0:0;
 			m_EN_out8[1]  = (data&2) ? ~0:0;
 			m_EN_out4[1]  = (data&4) ? ~0:0;
 			m_EN_out2[1]  = (data&8) ? ~0:0;
-
 			break;
 		}
 	}
@@ -508,6 +614,11 @@ void msm5232_device::EG_voices_advance()
 				if(voi->eg >= VMAX * 80/100 )
 				{
 					voi->eg_sect = 1;
+					voi->counter_decayed = m_counter;
+					if( voi->counter_attacked )
+					{
+						printf( "msm5232: attack->decay: channel #%d dur=%lld\n", i, m_counter - voi->counter_attacked );
+					}
 				}
 			}
 			else
@@ -537,6 +648,10 @@ void msm5232_device::EG_voices_advance()
 			else /* voi->eg <= VMIN */
 			{
 				voi->eg_sect =-1;
+				if( voi->counter_attacked )
+				{
+					printf( "msm5232: decay->stop: channel #%d dur=%lld\n", i, m_counter - voi->counter_attacked );
+				}
 			}
 
 			voi->egvol = voi->eg / 16; /*32768/16 = 2048 max*/
@@ -560,6 +675,10 @@ void msm5232_device::EG_voices_advance()
 			else /* voi->eg <= VMIN */
 			{
 				voi->eg_sect =-1;
+				if( voi->counter_attacked )
+				{
+					printf( "msm5232: release->stop: channel #%d dur=%lld\n", i, m_counter - voi->counter_attacked );
+				}
 			}
 
 			voi->egvol = voi->eg / 16; /*32768/16 = 2048 max*/
@@ -574,6 +693,7 @@ void msm5232_device::EG_voices_advance()
 		i--;
 	} while (i>0);
 
+	m_counter += 1;
 }
 
 static int o2,o4,o8,o16,solo8,solo16;
@@ -643,17 +763,20 @@ void msm5232_device::TG_group_advance(int groupidx)
 		}
 
 		/* calculate signed output */
+		if( groupidx == 0 && ( i == 2 || i==1 ) )
+		{
 		o16 += ( (out16-(1<<(STEP_SH-1))) * voi->egvol) >> STEP_SH;
 		o8  += ( (out8 -(1<<(STEP_SH-1))) * voi->egvol) >> STEP_SH;
 		o4  += ( (out4 -(1<<(STEP_SH-1))) * voi->egvol) >> STEP_SH;
 		o2  += ( (out2 -(1<<(STEP_SH-1))) * voi->egvol) >> STEP_SH;
-
+		}
+		//if(0)
 		if (i == 1 && groupidx == 1)
 		{
 			solo16 += ( (out16-(1<<(STEP_SH-1))) << 11) >> STEP_SH;
 			solo8  += ( (out8 -(1<<(STEP_SH-1))) << 11) >> STEP_SH;
 		}
-
+		
 		voi++;
 		i--;
 	}while (i>0);

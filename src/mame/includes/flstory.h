@@ -34,7 +34,8 @@ public:
 		m_soundlatch(*this, "soundlatch"),
 		m_soundlatch2(*this, "soundlatch2"),
 		m_soundnmi(*this, "soundnmi"),
-		m_extraio1(*this, "EXTRA_P1")
+		m_extraio1(*this, "EXTRA_P1"),
+		m_debug_input(*this, "DEBUG")
 	{ }
 
 	void common(machine_config &config);
@@ -43,6 +44,8 @@ public:
 	void onna34ro(machine_config &config);
 	void victnine(machine_config &config);
 	void onna34ro_mcu(machine_config &config);
+
+	DECLARE_CUSTOM_INPUT_MEMBER( debug_in_r );
 
 protected:
 	virtual void machine_start() override;
@@ -85,6 +88,7 @@ private:
 	required_device<generic_latch_8_device> m_soundlatch2;
 	required_device<input_merger_device> m_soundnmi;
 	optional_ioport m_extraio1;
+	required_ioport m_debug_input;
 
 	uint8_t snd_flag_r();
 	void snd_reset_w(uint8_t data);

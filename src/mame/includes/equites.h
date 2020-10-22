@@ -16,6 +16,7 @@
 #include "emupal.h"
 #include "screen.h"
 #include "tilemap.h"
+#include "audio/ad_sound.h"
 
 
 class equites_state : public driver_device
@@ -31,7 +32,9 @@ public:
 		m_palette(*this, "palette"),
 		m_screen(*this, "screen"),
 		m_alpha_8201(*this, "alpha_8201"),
-		m_mainlatch(*this, "mainlatch")
+		m_mainlatch(*this, "mainlatch"),
+		m_ad_59mc07(*this, "sound_board" ),
+		m_debug_input(*this, "DEBUG")
 	{ }
 
 	/* memory pointers */
@@ -52,6 +55,8 @@ public:
 	required_device<screen_device> m_screen;
 	required_device<alpha_8201_device> m_alpha_8201;
 	required_device<ls259_device> m_mainlatch;
+	required_device<ad_59mc07_device> m_ad_59mc07;
+	//required_device<ad_60mc01_device> m_ad_59mc07;
 
 	uint16_t equites_spriteram_kludge_r();
 	uint8_t equites_fg_videoram_r(offs_t offset);
@@ -74,11 +79,15 @@ public:
 	void equites(machine_config &config);
 	void bngotime(machine_config &config);
 
+	required_ioport m_debug_input;
+	DECLARE_CUSTOM_INPUT_MEMBER( debug_in_r );
+
 protected:
 	virtual void machine_start() override;
 	void bngotime_map(address_map &map);
 	void equites_map(address_map &map);
 	void equites_common_map(address_map &map);
+
 };
 
 class gekisou_state : public equites_state

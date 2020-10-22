@@ -197,6 +197,43 @@ void flstory_state::sound_map(address_map &map)
 
 
 
+CUSTOM_INPUT_MEMBER( flstory_state::debug_in_r )
+{
+	static uint8_t data_last = 0x00;
+	static uint8_t sound_id = 0x00;
+	uint8_t data = m_debug_input->read();
+	if( data != data_last )
+	{
+		//printf( "0x%02x", data );
+		uint8_t bit_modified = data ^ data_last;
+		uint8_t bit_push = data & bit_modified;
+		data_last = data;
+		
+		if( bit_push & 0x01 )
+		{
+			sound_id -= 1;
+			printf( "sound id:0x%02x\n", sound_id );
+		}
+		if( bit_push & 0x02 )
+		{
+			sound_id += 1;
+			printf( "sound id:0x%02x\n", sound_id );
+		}
+		if( bit_push & 0x04 )
+		{
+			m_soundlatch->write( sound_id );
+			printf( "soundlatch write:0x%02x\n", sound_id );
+		}
+		if( bit_push & 0x08 )
+		{
+			m_soundlatch->write( 0x00 );
+			printf( "sound stop\n" );
+		}
+	};
+	return 0;
+}
+
+
 /* When "Debug Mode" Dip Switch is ON, keep IPT_SERVICE1 ('9') pressed to freeze the game.
    Once the game is frozen, you can press IPT_START1 ('5') to advance 1 frame, or IPT_START2
    ('6') to advance 6 frames.
@@ -307,6 +344,15 @@ static INPUT_PORTS_START( flstory )
 	PORT_BIT( 0x04, IP_ACTIVE_LOW, IPT_JOYSTICK_LEFT ) PORT_2WAY PORT_COCKTAIL
 	PORT_BIT( 0x08, IP_ACTIVE_LOW, IPT_JOYSTICK_RIGHT ) PORT_2WAY PORT_COCKTAIL
 	PORT_BIT( 0xf0, IP_ACTIVE_LOW, IPT_UNUSED )
+
+	PORT_START("DEBUG")
+	PORT_BIT( 0x01, 0x00, IPT_START3 )
+	PORT_BIT( 0x02, 0x00, IPT_START4 )
+	PORT_BIT( 0x04, 0x00, IPT_COIN3 )
+	PORT_BIT( 0x08, 0x00, IPT_COIN4 )
+	PORT_START("DEBUG_CALLBACK")
+	PORT_BIT( 0x01, 0x00, IPT_START3 )	 PORT_CUSTOM_MEMBER(flstory_state, debug_in_r)
+
 INPUT_PORTS_END
 
 static INPUT_PORTS_START( onna34ro )
@@ -424,6 +470,14 @@ static INPUT_PORTS_START( onna34ro )
 	PORT_BIT( 0x20, IP_ACTIVE_LOW, IPT_JOYSTICK_UP ) PORT_8WAY PORT_COCKTAIL
 	PORT_BIT( 0x40, IP_ACTIVE_LOW, IPT_UNKNOWN )
 	PORT_BIT( 0x80, IP_ACTIVE_LOW, IPT_UNKNOWN )
+
+	PORT_START("DEBUG")
+	PORT_BIT( 0x01, 0x00, IPT_START3 )
+	PORT_BIT( 0x02, 0x00, IPT_START4 )
+	PORT_BIT( 0x04, 0x00, IPT_COIN3 )
+	PORT_BIT( 0x08, 0x00, IPT_COIN4 )
+	PORT_START("DEBUG_CALLBACK")
+	PORT_BIT( 0x01, 0x00, IPT_START3 )	 PORT_CUSTOM_MEMBER(flstory_state, debug_in_r)
 INPUT_PORTS_END
 
 static INPUT_PORTS_START( victnine )
@@ -543,6 +597,14 @@ static INPUT_PORTS_START( victnine )
 	PORT_BIT( 0x20, IP_ACTIVE_LOW, IPT_BUTTON6 ) PORT_COCKTAIL PORT_CONDITION("SWA", 0xa0, NOTEQUALS, 0x00)
 	PORT_BIT( 0x40, IP_ACTIVE_LOW, IPT_UNKNOWN )
 	PORT_BIT( 0x80, IP_ACTIVE_LOW, IPT_UNKNOWN )
+
+	PORT_START("DEBUG")
+	PORT_BIT( 0x01, 0x00, IPT_START3 )
+	PORT_BIT( 0x02, 0x00, IPT_START4 )
+	PORT_BIT( 0x04, 0x00, IPT_COIN3 )
+	PORT_BIT( 0x08, 0x00, IPT_COIN4 )
+	PORT_START("DEBUG_CALLBACK")
+	PORT_BIT( 0x01, 0x00, IPT_START3 )	 PORT_CUSTOM_MEMBER(flstory_state, debug_in_r)
 INPUT_PORTS_END
 
 
@@ -672,6 +734,14 @@ static INPUT_PORTS_START( rumba )
 	PORT_BIT( 0x20, IP_ACTIVE_LOW, IPT_UNKNOWN )
 	PORT_BIT( 0x40, IP_ACTIVE_LOW, IPT_UNKNOWN )
 	PORT_BIT( 0x80, IP_ACTIVE_LOW, IPT_UNKNOWN )
+
+	PORT_START("DEBUG")
+	PORT_BIT( 0x01, 0x00, IPT_START3 )
+	PORT_BIT( 0x02, 0x00, IPT_START4 )
+	PORT_BIT( 0x04, 0x00, IPT_COIN3 )
+	PORT_BIT( 0x08, 0x00, IPT_COIN4 )
+	PORT_START("DEBUG_CALLBACK")
+	PORT_BIT( 0x01, 0x00, IPT_START3 )	 PORT_CUSTOM_MEMBER(flstory_state, debug_in_r)
 INPUT_PORTS_END
 
 

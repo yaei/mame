@@ -150,6 +150,43 @@ void bigevglf_state::beg_port08_w(uint8_t data)
 	m_port_select = (data & 0x04) >> 2;
 }
 
+CUSTOM_INPUT_MEMBER( bigevglf_state::debug_in_r )
+{
+	static uint8_t data_last = 0x00;
+	static uint8_t sound_id = 0x00;
+	uint8_t data = m_debug_input->read();
+	if( data != data_last )
+	{
+		//printf( "0x%02x", data );
+		uint8_t bit_modified = data ^ data_last;
+		uint8_t bit_push = data & bit_modified;
+		data_last = data;
+		
+		if( bit_push & 0x01 )
+		{
+			sound_id -= 1;
+			printf( "sound id:0x%02x\n", sound_id );
+		}
+		if( bit_push & 0x02 )
+		{
+			sound_id += 1;
+			printf( "sound id:0x%02x\n", sound_id );
+		}
+		if( bit_push & 0x04 )
+		{
+			m_soundlatch[0]->write( sound_id );
+			printf( "soundlatch write:0x%02x\n", sound_id );
+		}
+		if( bit_push & 0x08 )
+		{
+			//m_soundlatch->write( *(address_space*)nullptr, 0, 0xff );
+			//printf( "soundlatch write:0x%02x\n", 0xff );
+			m_soundlatch[0]->write( 0x00 );
+			printf( "sound stop\n" );
+		}
+	};
+	return 0;
+}
 
 static INPUT_PORTS_START( bigevglf )
 	PORT_START("PORT00")        /* port 00 on sub cpu */
@@ -218,6 +255,15 @@ static INPUT_PORTS_START( bigevglf )
 
 	PORT_START("P2Y")   /* port 03 on sub cpu - muxed port 1 */
 	PORT_BIT( 0xff, 0x00, IPT_TRACKBALL_Y ) PORT_SENSITIVITY(30) PORT_KEYDELTA(10) PORT_REVERSE PORT_COCKTAIL
+
+	PORT_START("DEBUG")
+	PORT_BIT( 0x01, 0x00, IPT_START3 )
+	PORT_BIT( 0x02, 0x00, IPT_START4 )
+	PORT_BIT( 0x04, 0x00, IPT_COIN3 )
+	PORT_BIT( 0x08, 0x00, IPT_COIN4 )
+	PORT_START("DEBUG_CALLBACK")
+	PORT_BIT( 0x01, 0x00, IPT_START3 )	 PORT_CUSTOM_MEMBER(bigevglf_state, debug_in_r)
+
 INPUT_PORTS_END
 
 static INPUT_PORTS_START( bigevglfj )
@@ -285,6 +331,38 @@ uint8_t bigevglf_state::sub_cpu_mcu_coin_port_r()
 		m_mcu_coin_bit5;  /* bit 0 and bit 1 - coin inputs */
 }
 
+void bigevglf_state::soundlatch_write( uint8_t data )
+{
+	#if 0
+	if(
+			data == 0x14
+		||	data == 0x1a
+		||	data == 0x1b
+		)
+	return;
+	#endif
+	static uint8_t data_last = 0xff;
+	if( data != data_last )
+	{
+		printf( "soundlatch_write: 0x%02x\n", data );
+		data_last = data;
+	}
+	/*
+	static uint8_t track_last = 0xf5;
+	if( data == 0x5d )
+	{
+		data = track_last;
+		if( track_last == 0xff )
+			track_last = 0xf0;
+		else
+			track_last += 1;
+		printf( "\toverride:0x%02x\n", data );
+	}
+	*/
+	m_soundlatch[0]->write( data );
+}
+
+
 void bigevglf_state::bigevglf_sub_portmap(address_map &map)
 {
 	map.global_mask(0xff);
@@ -303,7 +381,8 @@ void bigevglf_state::bigevglf_sub_portmap(address_map &map)
 	map(0x10, 0x17).w(FUNC(bigevglf_state::beg13_a_clr_w));
 	map(0x18, 0x1f).w(FUNC(bigevglf_state::beg13_b_set_w));
 	map(0x20, 0x20).r(m_soundlatch[1], FUNC(generic_latch_8_device::read));
-	map(0x20, 0x20).w(m_soundlatch[0], FUNC(generic_latch_8_device::write));
+	//map(0x20, 0x20).w(m_soundlatch[0], FUNC(generic_latch_8_device::write));
+	map(0x20, 0x20).w(FUNC(bigevglf_state::soundlatch_write));
 	map(0x21, 0x21).r(FUNC(bigevglf_state::soundstate_r));
 }
 

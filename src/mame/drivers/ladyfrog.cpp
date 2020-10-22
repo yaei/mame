@@ -89,6 +89,13 @@ TIMER_CALLBACK_MEMBER(ladyfrog_state::nmi_callback)
 
 void ladyfrog_state::sound_command_w(uint8_t data)
 {
+	static uint8_t data_last = 0xff;
+	if( data != data_last )
+	{
+		printf( "sound_command_w: 0x%02x\n", data );
+		data_last = data;
+	}
+
 	m_soundlatch->write(data);
 	machine().scheduler().synchronize(timer_expired_delegate(FUNC(ladyfrog_state::nmi_callback),this), data);
 }
@@ -157,6 +164,45 @@ void ladyfrog_state::ladyfrog_sound_map(address_map &map)
 }
 
 
+CUSTOM_INPUT_MEMBER( ladyfrog_state::debug_in_r )
+{
+	static uint8_t data_last = 0x00;
+	static uint8_t sound_id = 0x00;
+	uint8_t data = m_debug_input->read();
+	if( data != data_last )
+	{
+		//printf( "0x%02x", data );
+		uint8_t bit_modified = data ^ data_last;
+		uint8_t bit_push = data & bit_modified;
+		data_last = data;
+		
+		if( bit_push & 0x01 )
+		{
+			sound_id -= 1;
+			printf( "sound id:0x%02x\n", sound_id );
+		}
+		if( bit_push & 0x02 )
+		{
+			sound_id += 1;
+			printf( "sound id:0x%02x\n", sound_id );
+		}
+		if( bit_push & 0x04 )
+		{
+			sound_command_w( sound_id );
+			printf( "send sound id:0x%02x\n", sound_id );
+		}
+		if( bit_push & 0x08 )
+		{
+			//m_soundlatch->write( *(address_space*)nullptr, 0, 0xff );
+			//printf( "soundlatch write:0x%02x\n", 0xff );
+			sound_command_w( 0x00 );
+			printf( "sound stop\n" );
+		}
+	};
+	return 0;
+}
+
+
 static INPUT_PORTS_START( ladyfrog )
 
 	PORT_START("DSW1")
@@ -208,6 +254,14 @@ static INPUT_PORTS_START( ladyfrog )
 	PORT_BIT( 0x02, IP_ACTIVE_LOW, IPT_START1 )
 	PORT_BIT( 0x04, IP_ACTIVE_LOW, IPT_START2 )
 	PORT_BIT( 0x08, IP_ACTIVE_LOW, IPT_BUTTON1 )
+
+	PORT_START("DEBUG")
+	PORT_BIT( 0x01, 0x00, IPT_START3 )
+	PORT_BIT( 0x02, 0x00, IPT_START4 )
+	PORT_BIT( 0x04, 0x00, IPT_COIN3 )
+	PORT_BIT( 0x08, 0x00, IPT_COIN4 )
+	PORT_START("DEBUG_CALLBACK")
+	PORT_BIT( 0x01, 0x00, IPT_START3 )	 PORT_CUSTOM_MEMBER(ladyfrog_state, debug_in_r)
 INPUT_PORTS_END
 
 
@@ -233,6 +287,7 @@ static INPUT_PORTS_START( toucheme )
 	PORT_DIPSETTING(    0x00, DEF_STR( Off ) )
 	PORT_DIPSETTING(    0x02, DEF_STR( On ) )
 	PORT_DIPUNKNOWN_DIPLOC( 0x08, 0x08, "SW2:4" )
+
 INPUT_PORTS_END
 
 

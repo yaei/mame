@@ -21,7 +21,10 @@ public:
 		m_soundlatch(*this, "soundlatch%u", 1),
 		m_gfxdecode(*this, "gfxdecode"),
 		m_screen(*this, "screen"),
-		m_palette(*this, "palette") { }
+		m_palette(*this, "palette"),
+		m_debug_input(*this, "DEBUG")
+
+		{ }
 
 	/* memory pointers */
 	required_shared_ptr<uint8_t> m_paletteram;
@@ -81,4 +84,8 @@ public:
 	void main_map(address_map &map);
 	void sound_map(address_map &map);
 	void sub_map(address_map &map);
+
+	required_ioport m_debug_input;
+	DECLARE_CUSTOM_INPUT_MEMBER( debug_in_r );
+	void soundlatch_write(uint8_t data);
 };

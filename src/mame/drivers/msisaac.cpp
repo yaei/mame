@@ -34,6 +34,13 @@ TIMER_CALLBACK_MEMBER(msisaac_state::nmi_callback)
 
 void msisaac_state::sound_command_w(uint8_t data)
 {
+	static uint8_t data_last = 0xff;
+	if( data != data_last )
+	{
+		printf( "sound_command_w: 0x%02x\n", data );
+		data_last = data;
+	}
+
 	m_soundlatch->write(data);
 	machine().scheduler().synchronize(timer_expired_delegate(FUNC(msisaac_state::nmi_callback),this), data);
 }
@@ -214,6 +221,8 @@ void msisaac_state::msisaac_map(address_map &map)
 
 void msisaac_state::sound_control_0_w(uint8_t data)
 {
+	static uint8_t data_last = 0xff;
+
 	m_snd_ctrl0 = data & 0xff;
 	//popmessage("SND0 0=%2x 1=%2x", m_snd_ctrl0, m_snd_ctrl1);
 
@@ -223,6 +232,12 @@ void msisaac_state::sound_control_0_w(uint8_t data)
 		m_ta7630->set_channel_volume(m_msm,i,   m_snd_ctrl0 & 0xf);
 		// group2
 		m_ta7630->set_channel_volume(m_msm,i+4, m_snd_ctrl0 >> 4);
+
+		if( data != data_last )
+		{
+			printf( "bsisaac: volume: %02x->%02x\n", data_last, data );
+			data_last = data;
+		};
 	}
 //  m_msm->set_output_gain(0, m_vol_ctrl[m_snd_ctrl0 & 15] / 100.0);    /* group1 from msm5232 */
 //  m_msm->set_output_gain(1, m_vol_ctrl[m_snd_ctrl0 & 15] / 100.0);    /* group1 from msm5232 */
@@ -253,6 +268,45 @@ void msisaac_state::msisaac_sound_map(address_map &map)
 	map(0xc002, 0xc002).w(FUNC(msisaac_state::nmi_disable_w));
 	map(0xc003, 0xc003).nopw(); /*???*/ /* this is NOT mixer_enable */
 	map(0xe000, 0xffff).nopr(); /*space for diagnostic ROM (not dumped, not reachable) */
+}
+
+CUSTOM_INPUT_MEMBER( msisaac_state::debug_in_r )
+{
+	static uint8_t data_last = 0x00;
+	static uint8_t sound_id = 0x00;
+	uint8_t data = m_debug_input->read();
+	if( data != data_last )
+	{
+		//printf( "0x%02x", data );
+		uint8_t bit_modified = data ^ data_last;
+		uint8_t bit_push = data & bit_modified;
+		data_last = data;
+		
+		if( bit_push & 0x01 )
+		{
+			sound_id -= 1;
+			printf( "sound id:0x%02x\n", sound_id );
+		}
+		if( bit_push & 0x02 )
+		{
+			sound_id += 1;
+			printf( "sound id:0x%02x\n", sound_id );
+		}
+		if( bit_push & 0x04 )
+		{
+			m_msm->reset();
+			sound_command_w( sound_id );
+			printf( "send sound id:0x%02x\n", sound_id );
+		}
+		if( bit_push & 0x08 )
+		{
+			//m_soundlatch->write( *(address_space*)nullptr, 0, 0xff );
+			//printf( "soundlatch write:0x%02x\n", 0xff );
+			sound_command_w( 0x00 );
+			printf( "sound stop\n" );
+		}
+	};
+	return 0;
 }
 
 static INPUT_PORTS_START( msisaac )
@@ -371,6 +425,14 @@ static INPUT_PORTS_START( msisaac )
 	PORT_BIT( 0x20, IP_ACTIVE_LOW, IPT_JOYSTICK_UP ) PORT_8WAY PORT_COCKTAIL
 	PORT_BIT( 0x40, IP_ACTIVE_LOW, IPT_UNKNOWN )
 	PORT_BIT( 0x80, IP_ACTIVE_LOW, IPT_UNKNOWN )
+
+	PORT_START("DEBUG")
+	PORT_BIT( 0x01, 0x00, IPT_START3 )
+	PORT_BIT( 0x02, 0x00, IPT_START4 )
+	PORT_BIT( 0x04, 0x00, IPT_COIN3 )
+	PORT_BIT( 0x08, 0x00, IPT_COIN4 )
+	PORT_START("DEBUG_CALLBACK")
+	PORT_BIT( 0x01, 0x00, IPT_START3 )	 PORT_CUSTOM_MEMBER(msisaac_state, debug_in_r)
 
 INPUT_PORTS_END
 

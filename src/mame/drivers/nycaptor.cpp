@@ -289,7 +289,8 @@ void nycaptor_state::nycaptor_master_map(address_map &map)
 	map(0xd000, 0xd000).rw(m_bmcu, FUNC(taito68705_mcu_device::data_r), FUNC(taito68705_mcu_device::data_w));
 	map(0xd001, 0xd001).w(FUNC(nycaptor_state::sub_cpu_halt_w));
 	map(0xd002, 0xd002).rw(FUNC(nycaptor_state::nycaptor_generic_control_r), FUNC(nycaptor_state::nycaptor_generic_control_w));   /* bit 3 - memory bank at 0x8000-0xbfff */
-	map(0xd400, 0xd400).r(m_soundlatch2, FUNC(generic_latch_8_device::read)).w(m_soundlatch, FUNC(generic_latch_8_device::write));
+	//map(0xd400, 0xd400).r(m_soundlatch2, FUNC(generic_latch_8_device::read)).w(m_soundlatch, FUNC(generic_latch_8_device::write));
+	map(0xd400, 0xd400).r(m_soundlatch2, FUNC(generic_latch_8_device::read)).w(FUNC(nycaptor_state::soundlatch_write));
 	map(0xd401, 0xd401).nopr();
 	map(0xd403, 0xd403).w(FUNC(nycaptor_state::sound_cpu_reset_w));
 	map(0xd800, 0xd800).portr("DSWA");
@@ -387,7 +388,8 @@ void nycaptor_state::cyclshtg_master_map(address_map &map)
 	map(0xd000, 0xd000).rw(FUNC(nycaptor_state::cyclshtg_mcu_r), FUNC(nycaptor_state::cyclshtg_mcu_w));
 	map(0xd001, 0xd001).w(FUNC(nycaptor_state::sub_cpu_halt_w));
 	map(0xd002, 0xd002).rw(FUNC(nycaptor_state::nycaptor_generic_control_r), FUNC(nycaptor_state::cyclshtg_generic_control_w));
-	map(0xd400, 0xd400).r(m_soundlatch2, FUNC(generic_latch_8_device::read)).w(m_soundlatch, FUNC(generic_latch_8_device::write));
+	//map(0xd400, 0xd400).r(m_soundlatch2, FUNC(generic_latch_8_device::read)).w(m_soundlatch, FUNC(generic_latch_8_device::write));
+	map(0xd400, 0xd400).r(m_soundlatch2, FUNC(generic_latch_8_device::read)).w(FUNC(nycaptor_state::soundlatch_write));
 	map(0xd403, 0xd403).w(FUNC(nycaptor_state::sound_cpu_reset_w));
 	map(0xd800, 0xd800).portr("DSWA");
 	map(0xd801, 0xd801).portr("DSWB");
@@ -438,7 +440,8 @@ void nycaptor_state::bronx_master_map(address_map &map)
 	map(0xd000, 0xd000).r(FUNC(nycaptor_state::cyclshtg_mcu_r)).nopw();
 	map(0xd001, 0xd001).w(FUNC(nycaptor_state::sub_cpu_halt_w));
 	map(0xd002, 0xd002).rw(FUNC(nycaptor_state::nycaptor_generic_control_r), FUNC(nycaptor_state::cyclshtg_generic_control_w));
-	map(0xd400, 0xd400).r(m_soundlatch2, FUNC(generic_latch_8_device::read)).w(m_soundlatch, FUNC(generic_latch_8_device::write));
+	//map(0xd400, 0xd400).r(m_soundlatch2, FUNC(generic_latch_8_device::read)).w(m_soundlatch, FUNC(generic_latch_8_device::write));
+	map(0xd400, 0xd400).r(m_soundlatch2, FUNC(generic_latch_8_device::read)).w(FUNC(nycaptor_state::soundlatch_write));
 	map(0xd401, 0xd401).r(FUNC(nycaptor_state::unk_r));
 	map(0xd403, 0xd403).w(FUNC(nycaptor_state::sound_cpu_reset_w));
 	map(0xd800, 0xd800).portr("DSWA");
@@ -480,6 +483,75 @@ void nycaptor_state::bronx_slave_map(address_map &map)
 void nycaptor_state::bronx_slave_io_map(address_map &map)
 {
 	map(0x0000, 0x7fff).rom().region("user1", 0);
+}
+
+void nycaptor_state::soundlatch_write( uint8_t data )
+{
+	#if 0
+	if(
+			data == 0x14
+		||	data == 0x1a
+		||	data == 0x1b
+		)
+	return;
+	#endif
+	static uint8_t data_last = 0xff;
+	if( data != data_last )
+	{
+		printf( "soundlatch_write: 0x%02x\n", data );
+		data_last = data;
+	}
+	/*
+	static uint8_t track_last = 0xf5;
+	if( data == 0x5d )
+	{
+		data = track_last;
+		if( track_last == 0xff )
+			track_last = 0xf0;
+		else
+			track_last += 1;
+		printf( "\toverride:0x%02x\n", data );
+	}
+	*/
+	m_soundlatch->write( data );
+}
+
+CUSTOM_INPUT_MEMBER( nycaptor_state::debug_in_r )
+{
+	static uint8_t data_last = 0x00;
+	static uint8_t sound_id = 0x00;
+	uint8_t data = m_debug_input->read();
+	if( data != data_last )
+	{
+		//printf( "0x%02x", data );
+		uint8_t bit_modified = data ^ data_last;
+		uint8_t bit_push = data & bit_modified;
+		data_last = data;
+		
+		if( bit_push & 0x01 )
+		{
+			sound_id -= 1;
+			printf( "sound id:0x%02x\n", sound_id );
+		}
+		if( bit_push & 0x02 )
+		{
+			sound_id += 1;
+			printf( "sound id:0x%02x\n", sound_id );
+		}
+		if( bit_push & 0x04 )
+		{
+			m_soundlatch->write( sound_id );
+			printf( "soundlatch write:0x%02x\n", sound_id );
+		}
+		if( bit_push & 0x08 )
+		{
+			//m_soundlatch->write( *(address_space*)nullptr, 0, 0xff );
+			//printf( "soundlatch write:0x%02x\n", 0xff );
+			m_soundlatch->write( 0x00 );
+			printf( "sound stop\n" );
+		}
+	};
+	return 0;
 }
 
 
@@ -589,6 +661,14 @@ static INPUT_PORTS_START( nycaptor )
 
 	PORT_START("LIGHTY")
 	PORT_BIT( 0xff, 0x80, IPT_LIGHTGUN_Y ) PORT_CROSSHAIR(Y, 1.0, 0.0, 0) PORT_SENSITIVITY(25) PORT_KEYDELTA(15) PORT_PLAYER(1)
+
+	PORT_START("DEBUG")
+	PORT_BIT( 0x01, 0x00, IPT_START3 )
+	PORT_BIT( 0x02, 0x00, IPT_START4 )
+	PORT_BIT( 0x04, 0x00, IPT_COIN3 )
+	PORT_BIT( 0x08, 0x00, IPT_COIN4 )
+	PORT_START("DEBUG_CALLBACK")
+	PORT_BIT( 0x01, 0x00, IPT_START3 )	 PORT_CUSTOM_MEMBER(nycaptor_state, debug_in_r)
 INPUT_PORTS_END
 
 /* verified from Z80 code */
@@ -660,6 +740,14 @@ static INPUT_PORTS_START( cyclshtg )
 
 	PORT_START("LIGHTY")
 	PORT_BIT( 0xff, 0x80, IPT_LIGHTGUN_X ) PORT_CROSSHAIR(Y, -1.0, 0.0, 0) PORT_SENSITIVITY(25) PORT_KEYDELTA(15) PORT_PLAYER(1)
+
+	PORT_START("DEBUG")
+	PORT_BIT( 0x01, 0x00, IPT_START3 )
+	PORT_BIT( 0x02, 0x00, IPT_START4 )
+	PORT_BIT( 0x04, 0x00, IPT_COIN3 )
+	PORT_BIT( 0x08, 0x00, IPT_COIN4 )
+	PORT_START("DEBUG_CALLBACK")
+	PORT_BIT( 0x01, 0x00, IPT_START3 )	 PORT_CUSTOM_MEMBER(nycaptor_state, debug_in_r)
 INPUT_PORTS_END
 
 /* verified from Z80 code */

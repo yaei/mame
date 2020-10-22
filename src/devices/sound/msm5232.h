@@ -18,6 +18,8 @@ public:
 	void write(offs_t offset, uint8_t data);
 	void set_clock(int clock);
 
+	void reset();	// eito 20201021
+
 protected:
 	// device-level overrides
 	virtual void device_start() override;
@@ -45,6 +47,9 @@ private:
 		int     eg_sect;
 		int     counter;
 		int     eg;
+
+		long long	counter_attacked = 0;
+		long long	counter_decayed = 0;
 
 		uint8_t   eg_arm;     /* attack/release mode */
 
@@ -85,6 +90,8 @@ private:
 
 	int     m_chip_clock;      /* chip clock in Hz */
 	int     m_rate;       /* sample rate in Hz */
+
+	long long	m_counter = 0;
 
 	double  m_external_capacity[8]; /* in Farads, eg 0.39e-6 = 0.36 uF (microFarads) */
 	devcb_write_line m_gate_handler_cb;/* callback called when the GATE output pin changes state */

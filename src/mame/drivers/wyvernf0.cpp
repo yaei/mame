@@ -60,7 +60,8 @@ public:
 		m_bmcu(*this, "bmcu"),
 		m_gfxdecode(*this, "gfxdecode"),
 		m_palette(*this, "palette"),
-		m_soundlatch(*this, "soundlatch")
+		m_soundlatch(*this, "soundlatch"),
+		m_debug_input(*this, "DEBUG")
 	{ }
 
 	void wyvernf0(machine_config &config);
@@ -114,6 +115,12 @@ private:
 
 	void sound_map(address_map &map);
 	void wyvernf0_map(address_map &map);
+
+	required_ioport m_debug_input;
+	void soundlatch_write(uint8_t data);
+public:
+	DECLARE_CUSTOM_INPUT_MEMBER( debug_in_r );
+
 };
 
 
@@ -357,6 +364,12 @@ TIMER_CALLBACK_MEMBER(wyvernf0_state::nmi_callback)
 
 void wyvernf0_state::sound_command_w(uint8_t data)
 {
+	static uint8_t data_last = 0xff;
+	if( data != data_last )
+	{
+		printf( "soundlatch_write: 0x%02x\n", data );
+		data_last = data;
+	}
 	m_soundlatch->write(data);
 	machine().scheduler().synchronize(timer_expired_delegate(FUNC(wyvernf0_state::nmi_callback),this), data);
 }
@@ -439,6 +452,48 @@ void wyvernf0_state::sound_map(address_map &map)
     Input Ports
 
 ***************************************************************************/
+
+
+
+CUSTOM_INPUT_MEMBER( wyvernf0_state::debug_in_r )
+{
+	static uint8_t data_last = 0x00;
+	static uint8_t sound_id = 0x00;
+	uint8_t data = m_debug_input->read();
+	if( data != data_last )
+	{
+		//printf( "0x%02x", data );
+		uint8_t bit_modified = data ^ data_last;
+		uint8_t bit_push = data & bit_modified;
+		data_last = data;
+		
+		if( bit_push & 0x01 )
+		{
+			sound_id -= 1;
+			printf( "sound id:0x%02x\n", sound_id );
+		}
+		if( bit_push & 0x02 )
+		{
+			sound_id += 1;
+			printf( "sound id:0x%02x\n", sound_id );
+		}
+		if( bit_push & 0x04 )
+		{
+			sound_command_w( sound_id );
+			printf( "send sound id:0x%02x\n", sound_id );
+		}
+		if( bit_push & 0x08 )
+		{
+			//m_soundlatch->write( *(address_space*)nullptr, 0, 0xff );
+			//printf( "soundlatch write:0x%02x\n", 0xff );
+			sound_command_w( 0x00 );
+			printf( "sound stop\n" );
+		}
+	};
+	return 0;
+}
+
+
 
 static INPUT_PORTS_START( wyvernf0 )
 	PORT_START("DSW1")  // d600 -> 800c
@@ -571,6 +626,15 @@ static INPUT_PORTS_START( wyvernf0 )
 	PORT_BIT( 0x20, IP_ACTIVE_HIGH, IPT_BUTTON1        ) PORT_PLAYER(2)
 	PORT_BIT( 0x40, IP_ACTIVE_HIGH, IPT_UNKNOWN        )
 	PORT_BIT( 0x80, IP_ACTIVE_HIGH, IPT_UNKNOWN        )
+
+	PORT_START("DEBUG")
+	PORT_BIT( 0x01, 0x00, IPT_START3 )
+	PORT_BIT( 0x02, 0x00, IPT_START4 )
+	PORT_BIT( 0x04, 0x00, IPT_COIN3 )
+	PORT_BIT( 0x08, 0x00, IPT_COIN4 )
+	PORT_START("DEBUG_CALLBACK")
+	PORT_BIT( 0x01, 0x00, IPT_START3 )	 PORT_CUSTOM_MEMBER(wyvernf0_state, debug_in_r)
+
 INPUT_PORTS_END
 
 /***************************************************************************
